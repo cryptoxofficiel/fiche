@@ -1,0 +1,60 @@
+body {
+  font-family: sans-serif;
+  background-color: #f4f4f4;
+  margin: 0;
+  padding: 0;
+}
+
+header {
+  background-color: #2b6777;
+  color: white;
+  padding: 1rem;
+  text-align: center;
+}
+
+main {
+  max-width: 800px;
+  margin: auto;
+  padding: 2rem;
+  background-color: white;
+}
+
+form {
+  display: grid;
+  gap: 1rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+input {
+  padding: 0.5rem;
+  font-size: 1rem;
+}
+
+button {
+  padding: 0.75rem;
+  font-size: 1rem;
+  background-color: #52ab98;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #3d8a78;
+}
+
+#fiche-container.hidden {
+  display: none;
+}
+
+#fiche {
+  border: 1px solid #ccc;
+  margin-top: 1rem;
+  padding: 1rem;
+  background: #fafafa;
+}
+
