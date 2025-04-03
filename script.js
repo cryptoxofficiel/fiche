@@ -1,46 +1,24 @@
-import html2pdf from "html2pdf.js";
+document.getElementById('salary-form').addEventListener('submit', function (event) {
+  event.preventDefault();
 
-const form = document.getElementById("payroll-form");
-const ficheContainer = document.getElementById("fiche-container");
-const fiche = document.getElementById("fiche");
-const downloadBtn = document.getElementById("download-pdf");
-const exportable = document.getElementById("exportable");
+  // Récupérer le salaire brut saisi par l'utilisateur
+  const brut = parseFloat(document.getElementById('brut').value);
 
-form.addEventListener("submit", function (e) {
-  e.preventDefault();
+  if (isNaN(brut) || brut <= 0) {
+    alert('Veuillez entrer un salaire brut valide.');
+    return;
+  }
 
-  const nom = document.getElementById("nom").value;
-  const poste = document.getElementById("poste").value;
-  const salaireBrut = parseFloat(document.getElementById("salaireBrut").value);
-  const heures = parseFloat(document.getElementById("heures").value);
-  const mois = document.getElementById("mois").value;
+  // Simuler des taux de cotisations (exemple simplifié)
+  const cotisations = brut * 0.25; // 25% de cotisations
+  const impots = brut * 0.10;     // 10% d'impôts
+  const net = brut - cotisations - impots;
 
-  const cotisations = salaireBrut * 0.22;
-  const salaireNet = salaireBrut - cotisations;
-  const date = new Date(mois + "-01");
-  const moisTexte = date.toLocaleString("fr-FR", { month: "long", year: "numeric" });
-
-  fiche.innerHTML = `
-    <p><strong>Nom :</strong> ${nom}</p>
-    <p><strong>Poste :</strong> ${poste}</p>
-    <p><strong>Mois :</strong> ${moisTexte}</p>
-    <p><strong>Salaire Brut :</strong> ${salaireBrut.toFixed(2)} €</p>
-    <p><strong>Heures Travaillées :</strong> ${heures} h</p>
-    <p><strong>Cotisations Sociales :</strong> ${cotisations.toFixed(2)} €</p>
-    <p><strong>Salaire Net :</strong> ${salaireNet.toFixed(2)} €</p>
+  // Afficher le résultat
+  document.getElementById('resultat').innerHTML = `
+    Salaire brut : ${brut.toFixed(2)} €<br>
+    Cotisations : ${cotisations.toFixed(2)} €<br>
+    Impôts : ${impots.toFixed(2)} €<br>
+    Salaire net : <strong>${net.toFixed(2)} €</strong>
   `;
-
-  ficheContainer.classList.remove("hidden");
-
-  // Déclencher automatiquement le téléchargement du PDF
-  setTimeout(() => {
-    const opt = {
-      margin: 0.5,
-      filename: 'fiche-de-paie.pdf',
-      image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2 },
-      jsPDF: { unit: 'cm', format: 'a4', orientation: 'portrait' }
-    };
-    html2pdf().set(opt).from(exportable).save();
-  }, 300); // petit délai pour assurer le rendu DOM
 });
