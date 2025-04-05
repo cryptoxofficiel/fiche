@@ -1,59 +1,29 @@
-/* Style global */
-body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f4f4f9;
-    color: #333;
-}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Générateur de Fiche de Paie</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Générateur de Fiche de Paie</h1>
+        <form id="payrollForm">
+            <label for="name">Nom de l'employé:</label>
+            <input type="text" id="name" required>
+            <label for="position">Poste:</label>
+            <input type="text" id="position" required>
+            <label for="salary">Salaire Brut:</label>
+            <input type="number" id="salary" required>
+            <label for="hours">Heures Travaillées:</label>
+            <input type="number" id="hours" required>
+            <button type="submit">Générer la Fiche de Paie</button>
+        </form>
+        
+        <div id="payrollResult"></div>
+    </div>
 
-header {
-    background-color: #3598db;
-    color: white;
-    text-align: center;
-    padding: 20px;
-}
-
-main {
-    max-width: 800px;
-    margin: 20px auto;
-    padding: 20px;
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-form {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
-label {
-    font-weight: bold;
-}
-
-input, select, button {
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 16px;
-}
-
-button {
-    background-color: #3598db;
-    color: white;
-    cursor: pointer;
-}
-
-button:hover {
-    background-color: #2a7bbd;
-}
-
-#pay-slip-output {
-    margin-top: 20px;
-    padding: 15px;
-    background-color: #f9f9f9;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-}
+    <script src="app.js"></script>
+</body>
+</html>
