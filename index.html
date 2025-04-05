@@ -27,10 +27,11 @@
         
         function genererPDF() {
             const doc = new jsPDF();
+            const periode = "du 01/01/2025 au 31/01/2025"; // Période définie
             
             // Configuration
             doc.setProperties({
-                title: 'Bulletin de paie',
+                title: 'Bulletin de paie ' + periode,
                 subject: 'Bulletin de salaire',
                 author: 'Entreprise',
                 keywords: 'paie, salaire, bulletin'
@@ -62,12 +63,14 @@
             // Ligne de séparation
             doc.line(20, 55, 190, 55);
             
-            // Tableau éléments de paie
+            // Titre "ÉLÉMENTS DE PAIE" et période centrée
             doc.setFontSize(12);
             doc.text("ÉLÉMENTS DE PAIE", 20, 65);
+            doc.text(periode, 105, 65, { align: 'center' });
             
+            // Tableau éléments de paie
             doc.autoTable({
-                startY: 70,
+                startY: 75,
                 head: [['Éléments', 'Base', 'Taux', 'A déduire', 'A payer', 'Charges patronales']],
                 body: [
                     ['Salaire de base', '151.67', '17.3939', '', '2 638.13', ''],
@@ -131,7 +134,7 @@
             doc.text("Convention collective : Métiers du tertiaire", 105, 285, { align: 'center' });
             
             // Sauvegarde
-            doc.save('bulletin_paie.pdf');
+            doc.save('bulletin_paie_janvier_2025.pdf');
         }
     </script>
 </body>
