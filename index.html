@@ -10,7 +10,7 @@
         body { font-family: Arial; margin: 20px; }
         label { display: block; margin: 10px 0 5px; }
         input { width: 100%; padding: 8px; margin-bottom: 10px; }
-        .form-section { max-width: 500px; margin: 0 auto; }
+        .form-section { max-width: 600px; margin: 0 auto; }
         button { padding: 10px 15px; background: #0066cc; color: white; border: none; cursor: pointer; font-size: 16px; margin-top: 20px; display: block; width: 100%; }
     </style>
 </head>
@@ -60,7 +60,16 @@
             window.genererPDF = function () {
                 const doc = new jsPDF();
                 const periode = `Période : ${document.getElementById("mois").value}/${document.getElementById("annee").value}`;
-                const salaireBrut = document.getElementById("salaireBrut").value;
+                const salaireBrut = parseFloat(document.getElementById("salaireBrut").value);
+
+                // Calculs simplifiés pour démonstration
+                const csgDeductible = +(salaireBrut * 0.068).toFixed(2);
+                const csgNonDeductible = +(salaireBrut * 0.029).toFixed(2);
+                const secuSociale = +(salaireBrut * 0.069).toFixed(2);
+                const chomage = +(salaireBrut * 0.024).toFixed(2);
+                const retraite = +(salaireBrut * 0.075).toFixed(2);
+                const totalDeductions = +(csgDeductible + csgNonDeductible + secuSociale + chomage + retraite).toFixed(2);
+                const netAPayer = +(salaireBrut - totalDeductions).toFixed(2);
 
                 doc.setFontSize(14);
                 doc.text("BULLETIN DE SALAIRE", 105, 10, { align: 'center' });
@@ -99,10 +108,18 @@
 
                 doc.autoTable({
                     startY: 65,
-                    head: [["Éléments de paie", "Base", "Taux", "A déduire", "A payer", "Charges patronales"]],
-                    body: [["Salaire de base", "151.67", "17.3939", "", salaireBrut, ""]],
+                    head: [["Éléments de paie", "Base", "Taux", "À déduire", "À payer", "Charges patronales"]],
+                    body: [
+                        ["Salaire de base", "151.67h", "17.3939", "", salaireBrut.toFixed(2), ""],
+                        ["Sécurité Sociale", salaireBrut.toFixed(2), "6.9%", secuSociale.toFixed(2), "", ""],
+                        ["Assurance Chômage", salaireBrut.toFixed(2), "2.4%", chomage.toFixed(2), "", ""],
+                        ["Retraite complémentaire", salaireBrut.toFixed(2), "7.5%", retraite.toFixed(2), "", ""],
+                        ["CSG déductible", salaireBrut.toFixed(2), "6.8%", csgDeductible.toFixed(2), "", ""],
+                        ["CSG non déductible", salaireBrut.toFixed(2), "2.9%", csgNonDeductible.toFixed(2), "", ""],
+                        ["Net à payer", "", "", "", netAPayer.toFixed(2), ""]
+                    ],
                     margin: { left: 15 },
-                    styles: { fontSize: 7, cellPadding: 2 },
+                    styles: { fontSize: 8, cellPadding: 2 },
                     headStyles: { fillColor: [33, 64, 154], textColor: [255, 255, 255] }
                 });
 
