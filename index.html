@@ -90,14 +90,15 @@ form.addEventListener('submit', e => {
     const periode = document.getElementById('periode').value;
     const salaireBrut = parseFloat(document.getElementById('salaire').value);
 
-    // Cotisations sociales standards
+    // Cotisations sociales standards en 2025
     const cotisations = [
-      { libelle: 'Sécurité sociale', taux: 0.073 },
-      { libelle: 'Retraite de base', taux: 0.035 },
-      { libelle: 'CSG/CRDS', taux: 0.097 },
-      { libelle: 'Chômage', taux: 0.024 },
-      { libelle: 'Formation professionnelle', taux: 0.003 },
-      { libelle: 'Mutuelle santé', taux: 0.015 }
+      { libelle: 'Sécurité sociale (Maladie, Maternité)', taux: 0.073 },
+      { libelle: 'Retraite de base (Plafonnée)', taux: 0.069 },
+      { libelle: 'Retraite complémentaire (AGIRC-ARRCO)', taux: 0.0315 },
+      { libelle: 'CSG Déductible', taux: 0.068 },
+      { libelle: 'CSG/CRDS non déductible', taux: 0.029 },
+      { libelle: 'Chômage', taux: 0.0 },
+      { libelle: 'Mutuelle Santé', taux: 0.015 }
     ];
 
     let totalCotisations = 0;
@@ -110,7 +111,7 @@ form.addEventListener('submit', e => {
     });
 
     const netAvantImpots = (salaireBrut - totalCotisations).toFixed(2);
-    const impot = (netAvantImpots * 0.1).toFixed(2);
+    const impot = (netAvantImpots * 0.1).toFixed(2); // Prélèvement à la source à 10% pour exemple
     const netAPayer = (netAvantImpots - impot).toFixed(2);
 
     ficheContent.innerHTML = `
