@@ -27,7 +27,7 @@
         
         function genererPDF() {
             const doc = new jsPDF();
-            const periode = "du 01/01/2025 au 31/01/2025"; // Période définie
+            const periode = "du 01/01/2025 au 31/01/2025";
             
             // Configuration
             doc.setProperties({
@@ -41,7 +41,7 @@
             doc.setFontSize(16);
             doc.text("BULLETIN DE PAIE", 105, 15, { align: 'center' });
             
-            // Informations entreprise/salarié côte à côte
+            // Informations entreprise/salarié
             doc.setFontSize(10);
             
             // Colonne Entreprise
@@ -63,12 +63,12 @@
             // Ligne de séparation
             doc.line(20, 55, 190, 55);
             
-            // Titre "ÉLÉMENTS DE PAIE" et période centrée
+            // Titre et période
             doc.setFontSize(12);
             doc.text("ÉLÉMENTS DE PAIE", 20, 65);
             doc.text(periode, 105, 65, { align: 'center' });
             
-            // Tableau éléments de paie
+            // Tableau éléments de paie principal
             doc.autoTable({
                 startY: 75,
                 head: [['Éléments', 'Base', 'Taux', 'A déduire', 'A payer', 'Charges patronales']],
@@ -97,8 +97,7 @@
                     ['Forfait mensuel NAVIGO Zones 4 - 5', '65.20', '50.0000', '', '32.60', ''],
                     ['Réintégration fiscale', '108.15', '', '', '', ''],
                     ['Net à payer avant impôt sur le revenu', '', '', '', '2 028.77', ''],
-                    ['Impôt sur le revenu prélevé à la source - PAS', '2 259.23', '0.0000', '0.00', '', ''],
-                    ['Taux personnalisé', '', '', '', '', '2 028.77']
+                    ['Impôt sur le revenu prélevé à la source - PAS', '2 259.23', '0.0000', '0.00', '', '']
                 ],
                 margin: { left: 15 },
                 styles: { 
@@ -121,17 +120,34 @@
                 }
             });
             
-            // Signature
-            doc.text("Le salarié", 40, 270);
-            doc.text("_________________________", 40, 275);
-            
-            doc.text("L'employeur", 140, 270);
-            doc.text("_________________________", 140, 275);
-            
-            // Pied de page
-            doc.setFontSize(8);
-            doc.text("Date d'émission : " + new Date().toLocaleDateString(), 20, 285);
-            doc.text("Convention collective : Métiers du tertiaire", 105, 285, { align: 'center' });
+            // Tableau récapitulatif en bas de page
+            doc.autoTable({
+                startY: doc.lastAutoTable.finalY + 10,
+                head: [['Éléments', 'Base', 'Taux', 'A déduire', 'A payer', 'Charges patronales']],
+                body: [
+                    ['Salaire de base', '151.67', '17.3939', '', '2 638.13', ''],
+                    ['Taux personnalisé', '', '', '', '', '2 028.77']
+                ],
+                margin: { left: 15 },
+                styles: { 
+                    fontSize: 8,
+                    cellPadding: 3,
+                    overflow: 'linebreak'
+                },
+                headStyles: { 
+                    fillColor: [220, 220, 220],
+                    textColor: [0, 0, 0],
+                    fontStyle: 'bold'
+                },
+                columnStyles: {
+                    0: { cellWidth: 55 },
+                    1: { cellWidth: 20 },
+                    2: { cellWidth: 20 },
+                    3: { cellWidth: 20 },
+                    4: { cellWidth: 20 },
+                    5: { cellWidth: 30 }
+                }
+            });
             
             // Sauvegarde
             doc.save('bulletin_paie_janvier_2025.pdf');
