@@ -59,18 +59,26 @@
 
             window.genererPDF = function () {
                 const doc = new jsPDF();
-                const periode = `Période : ${document.getElementById("mois").value}/${document.getElementById("annee").value}`;
                 const salaireBrut = parseFloat(document.getElementById("salaireBrut").value);
+                const periode = `Période : ${document.getElementById("mois").value}/${document.getElementById("annee").value}`;
 
-                const csgDeductible = +(salaireBrut * 0.068).toFixed(2);
-                const csgNonDeductible = +(salaireBrut * 0.029).toFixed(2);
-                const secuSociale = +(salaireBrut * 0.069).toFixed(2);
-                const chomage = +(salaireBrut * 0.024).toFixed(2);
-                const retraite = +(salaireBrut * 0.075).toFixed(2);
-                const totalDeductions = +(csgDeductible + csgNonDeductible + secuSociale + chomage + retraite).toFixed(2);
-                const netAPayer = +(salaireBrut - totalDeductions).toFixed(2);
-                const chargesPatronales = +(salaireBrut * 0.42).toFixed(2);
-                const totalCharge = +(totalDeductions + chargesPatronales).toFixed(2);
+                const lignesPaie = [
+                    ["Salaire de base", "151.67h", "17.3939", "", salaireBrut.toFixed(2), ""],
+                    ["Maladie - maternité - invalidité - décès", salaireBrut, "0.75%", (salaireBrut * 0.0075).toFixed(2), "", (salaireBrut * 0.013).toFixed(2)],
+                    ["Assurance vieillesse déplafonnée", salaireBrut, "0.40%", (salaireBrut * 0.004).toFixed(2), "", (salaireBrut * 0.018).toFixed(2)],
+                    ["Assurance chômage", salaireBrut, "2.4%", (salaireBrut * 0.024).toFixed(2), "", (salaireBrut * 0.04).toFixed(2)],
+                    ["Retraite complémentaire", salaireBrut, "3.15%", (salaireBrut * 0.0315).toFixed(2), "", (salaireBrut * 0.08).toFixed(2)],
+                    ["CSG déductible", salaireBrut, "6.8%", (salaireBrut * 0.068).toFixed(2), "", ""],
+                    ["CSG/CRDS non déductible", salaireBrut, "2.9%", (salaireBrut * 0.029).toFixed(2), "", ""],
+                    ["Impôt sur le revenu prélevé à la source", salaireBrut, "5%", (salaireBrut * 0.05).toFixed(2), "", ""]
+                ];
+
+                const totalSalarial = lignesPaie.reduce((acc, l) => acc + parseFloat(l[3] || 0), 0);
+                const totalPatronal = lignesPaie.reduce((acc, l) => acc + parseFloat(l[5] || 0), 0);
+                const netAPayer = +(salaireBrut - totalSalarial).toFixed(2);
+
+                lignesPaie.push(["", "", "TOTAL", totalSalarial.toFixed(2), netAPayer.toFixed(2), totalPatronal.toFixed(2)]);
+                lignesPaie.push(["NET À PAYER EN EUROS", "", "", "", netAPayer.toFixed(2), ""]);
 
                 doc.setFontSize(14);
                 doc.text("BULLETIN DE SALAIRE", 105, 10, { align: 'center' });
@@ -86,7 +94,7 @@
                     document.getElementById("nomEntreprise").value,
                     document.getElementById("adresseEntreprise").value,
                     document.getElementById("villeEntreprise").value,
-                    "Siret : " + document.getElementById("siret").value,
+                    "SIRET : " + document.getElementById("siret").value,
                     "Téléphone : " + document.getElementById("telEntreprise").value
                 ];
 
@@ -110,23 +118,14 @@
                 doc.autoTable({
                     startY: 65,
                     head: [["Éléments de paie", "Base", "Taux", "À déduire", "À payer", "Charges patronales"]],
-                    body: [
-                        ["Salaire de base", "151.67h", "17.3939", "", salaireBrut.toFixed(2), ""],
-                        ["Sécurité Sociale", salaireBrut.toFixed(2), "6.9%", secuSociale.toFixed(2), "", (salaireBrut * 0.125).toFixed(2)],
-                        ["Assurance Chômage", salaireBrut.toFixed(2), "2.4%", chomage.toFixed(2), "", (salaireBrut * 0.04).toFixed(2)],
-                        ["Retraite complémentaire", salaireBrut.toFixed(2), "7.5%", retraite.toFixed(2), "", (salaireBrut * 0.14).toFixed(2)],
-                        ["CSG déductible", salaireBrut.toFixed(2), "6.8%", csgDeductible.toFixed(2), "", ""],
-                        ["CSG non déductible", salaireBrut.toFixed(2), "2.9%", csgNonDeductible.toFixed(2), "", ""],
-                        ["", "", "Total à déduire", totalDeductions.toFixed(2), "", "Total charges patronales: " + chargesPatronales.toFixed(2)],
-                        ["NET À PAYER", "", "", "", netAPayer.toFixed(2), ""]
-                    ],
+                    body: lignesPaie,
                     margin: { left: 15 },
                     styles: { fontSize: 8, cellPadding: 2 },
                     headStyles: { fillColor: [33, 64, 154], textColor: [255, 255, 255] }
                 });
 
                 doc.save("bulletin_paie.pdf");
-            };
+            }
         };
     </script>
 </body>
