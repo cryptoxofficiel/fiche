@@ -3,24 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bulletin de Paie Clone</title>
+    <title>Formulaire Bulletin de Paie</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js" defer></script>
     <style>
-        body { font-family: Arial; margin: 20px; text-align: center; }
-        button { 
-            padding: 10px 15px; 
-            background: #0066cc; 
-            color: white; 
-            border: none; 
-            cursor: pointer;
-            font-size: 16px;
-            margin-top: 20px;
-        }
+        body { font-family: Arial; margin: 20px; }
+        label { display: block; margin: 10px 0 5px; }
+        input { width: 100%; padding: 8px; margin-bottom: 10px; }
+        .form-section { max-width: 500px; margin: 0 auto; }
+        button { padding: 10px 15px; background: #0066cc; color: white; border: none; cursor: pointer; font-size: 16px; margin-top: 20px; display: block; width: 100%; }
     </style>
 </head>
 <body>
-    <button onclick="genererPDF()">Générer la fiche de paie</button>
+    <div class="form-section">
+        <h2>Informations Entreprise</h2>
+        <label for="nomEntreprise">Nom de l'entreprise</label>
+        <input type="text" id="nomEntreprise" value="SOCIETE RUE ANONYME">
+        <label for="adresseEntreprise">Adresse</label>
+        <input type="text" id="adresseEntreprise" value="4 RUE DE LA PAIX">
+        <label for="villeEntreprise">Ville</label>
+        <input type="text" id="villeEntreprise" value="70015 PARIS">
+        <label for="siret">SIRET</label>
+        <input type="text" id="siret" value="1234567890002">
+        <label for="telEntreprise">Téléphone</label>
+        <input type="text" id="telEntreprise" value="01 23 45 67 89">
+
+        <h2>Informations Salarié</h2>
+        <label for="nomSalarie">Nom du salarié</label>
+        <input type="text" id="nomSalarie" value="JEROME DUBOIS">
+        <label for="adresseSalarie">Adresse</label>
+        <input type="text" id="adresseSalarie" value="4 rue de la paix">
+        <label for="villeSalarie">Ville</label>
+        <input type="text" id="villeSalarie" value="70015 Paris">
+        <label for="emailSalarie">Email</label>
+        <input type="text" id="emailSalarie" value="jerome.dubois@email.com">
+        <label for="telSalarie">Téléphone</label>
+        <input type="text" id="telSalarie" value="06 12 34 56 78">
+        <label for="secuSalarie">N° Sécurité Sociale</label>
+        <input type="text" id="secuSalarie" value="2 2800000000000">
+
+        <h2>Période et Salaire</h2>
+        <label for="mois">Mois</label>
+        <input type="text" id="mois" value="04">
+        <label for="annee">Année</label>
+        <input type="text" id="annee" value="2025">
+        <label for="salaireBrut">Salaire Brut</label>
+        <input type="text" id="salaireBrut" value="2778.98">
+
+        <button onclick="genererPDF()">Générer la fiche de paie</button>
+    </div>
 
     <script>
         window.onload = function () {
@@ -28,35 +59,34 @@
 
             window.genererPDF = function () {
                 const doc = new jsPDF();
-                const periode = "Période : 10/2023";
+                const periode = `Période : ${document.getElementById("mois").value}/${document.getElementById("annee").value}`;
+                const salaireBrut = document.getElementById("salaireBrut").value;
 
                 doc.setFontSize(14);
                 doc.text("BULLETIN DE SALAIRE", 105, 10, { align: 'center' });
                 doc.setFontSize(10);
                 doc.text(periode, 105, 16, { align: 'center' });
 
-                // Infos entreprise et salarié côte à côte
-                doc.setFontSize(10);
                 doc.setFont(undefined, 'bold');
                 doc.text("Entreprise :", 15, 25);
                 doc.text("Salarié :", 115, 25);
                 doc.setFont(undefined, 'normal');
 
                 const infosEntreprise = [
-                    "SOCIETE RUE ANONYME",
-                    "4 RUE DE LA PAIX",
-                    "70015 PARIS",
-                    "Siret : 1234567890002",
-                    "Téléphone : 01 23 45 67 89"
+                    document.getElementById("nomEntreprise").value,
+                    document.getElementById("adresseEntreprise").value,
+                    document.getElementById("villeEntreprise").value,
+                    "Siret : " + document.getElementById("siret").value,
+                    "Téléphone : " + document.getElementById("telEntreprise").value
                 ];
 
                 const infosSalarie = [
-                    "Monsieur JEROME DUBOIS",
-                    "4 rue de la paix",
-                    "70015 Paris",
-                    "Email : jerome.dubois@email.com",
-                    "Téléphone : 06 12 34 56 78",
-                    "N° SS : 2 2800000000000"
+                    document.getElementById("nomSalarie").value,
+                    document.getElementById("adresseSalarie").value,
+                    document.getElementById("villeSalarie").value,
+                    "Email : " + document.getElementById("emailSalarie").value,
+                    "Téléphone : " + document.getElementById("telSalarie").value,
+                    "N° SS : " + document.getElementById("secuSalarie").value
                 ];
 
                 infosEntreprise.forEach((line, index) => {
@@ -70,60 +100,13 @@
                 doc.autoTable({
                     startY: 65,
                     head: [["Éléments de paie", "Base", "Taux", "A déduire", "A payer", "Charges patronales"]],
-                    body: [
-                        ["Salaire de base", "151.67", "17.3939", "", "2 638.13", ""],
-                        ["Prime d'ancienneté", "", "", "", "140.85", ""],
-                        ["Salaire brut", "", "", "", "4 778.98", ""],
-                        ["Santé", "", "", "", "", ""],
-                        ["Sécurité Sociale - Mal. Mat. Inval. Décès", "2 778.98", "0.4140", "11.50", "", "7.0000 | 194.53"],
-                        ["Complémentaire - Incap. Inval. Décès", "2 778.98", "0.4860", "13.51", "", ""],
-                        ["Complémentaire - Santé", "3 428.00", "3.1550", "108.15", "", "3.1550 | 108.15"],
-                        ["Accidents du travail & mal. professionnelles", "2 778.98", "0.9000", "", "", "25.01"],
-                        ["Retraite", "", "", "", "", ""],
-                        ["Sécurité Sociale plafonnée", "2 778.98", "6.9000", "191.75", "", "8.5500 | 237.60"],
-                        ["Sécurité Sociale déplafonnée", "2 778.98", "0.4000", "11.12", "", "1.9000 | 52.80"],
-                        ["Complémentaire Tranche 1", "2 778.98", "4.0100", "111.44", "", "6.0100 | 167.02"],
-                        ["Famille", "2 778.98", "", "", "", "3.4500 | 95.87"],
-                        ["Assurance chômage", "2 778.98", "", "", "", "4.2000 | 116.72"],
-                        ["Autres contributions dues par l'employeur", "2 778.98", "", "", "", "4.4060 | 122.45"],
-                        ["Autres contributions dues par l'employeur", "121.66", "8.0000", "", "", "9.73"],
-                        ["CSG déduct. de l'impôt sur le revenu", "2 852.01", "6.8000", "193.94", "", ""],
-                        ["CSG/CRDS non déduct. de l'impôt sur le revenu", "2 852.01", "2.9000", "82.71", "", ""],
-                        ["Total des cotisations et contributions", "", "", "710.61", "", "1 143.39"],
-                        ["Titres-restaurant", "22.00", "3.6000", "79.20", "", "5.4000 | 118.80"],
-                        ["Forfait Télétravail", "", "", "", "7.00", ""],
-                        ["Forfait mensuel NAVIGO Zones 4 - 5", "65.20", "50.0000", "", "32.60", ""],
-                        ["Réintégration fiscale", "108.15", "", "", "", ""],
-                        ["Net à payer avant impôt sur le revenu", "", "", "", "2 028.77", ""],
-                        ["Impôt sur le revenu prélevé à la source - PAS", "2 259.23", "0.0000", "0.00", "", ""]
-                    ],
+                    body: [["Salaire de base", "151.67", "17.3939", "", salaireBrut, ""]],
                     margin: { left: 15 },
-                    styles: { fontSize: 7, cellPadding: 2, overflow: 'linebreak' },
-                    headStyles: { fillColor: [33, 64, 154], textColor: [255, 255, 255] },
-                    columnStyles: {
-                        0: { cellWidth: 55 },
-                        1: { cellWidth: 20 },
-                        2: { cellWidth: 20 },
-                        3: { cellWidth: 20 },
-                        4: { cellWidth: 20 },
-                        5: { cellWidth: 30 }
-                    }
-                });
-
-                doc.autoTable({
-                    startY: doc.lastAutoTable.finalY + 10,
-                    head: [["Heures", "Heures suppl.", "Brut", "Plafond S.S.", "Net imposable", "Ch. patronales", "Coût Global", "Total versé", "Allégements"]],
-                    body: [[
-                        "Mensuel", "151.67", "2 778.98", "3 428.00", "2 259.23", "1 262.19", "4 080.77", "3 922.37", "216.76"
-                    ], [
-                        "Annuel", "1 213.36", "23 894.56", "27 424.00", "19 430.05", "10 603.69", "34 827.05", "33 655.85", "1 863.77"
-                    ]],
-                    margin: { left: 15 },
-                    styles: { fontSize: 7, cellPadding: 2, overflow: 'linebreak' },
+                    styles: { fontSize: 7, cellPadding: 2 },
                     headStyles: { fillColor: [33, 64, 154], textColor: [255, 255, 255] }
                 });
 
-                doc.save("bulletin_paie_clone.pdf");
+                doc.save("bulletin_paie.pdf");
             };
         };
     </script>
