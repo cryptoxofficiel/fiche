@@ -3,130 +3,291 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Formulaire Bulletin de Paie</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js" defer></script>
+    <title>Formulaire Bulletin de Paie Complet</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
     <style>
-        body { font-family: Arial; margin: 20px; }
-        label { display: block; margin: 10px 0 5px; }
-        input { width: 100%; padding: 8px; margin-bottom: 10px; }
-        .form-section { max-width: 600px; margin: 0 auto; }
-        button { padding: 10px 15px; background: #0066cc; color: white; border: none; cursor: pointer; font-size: 16px; margin-top: 20px; display: block; width: 100%; }
+        body { font-family: Arial, sans-serif; margin: 20px; line-height: 1.6; }
+        .form-container { max-width: 800px; margin: 0 auto; }
+        .form-section { margin-bottom: 20px; padding: 15px; background: #f5f5f5; border-radius: 5px; }
+        h2 { color: #2c3e50; margin-top: 0; }
+        label { display: block; margin: 10px 0 5px; font-weight: bold; }
+        input, select { width: 100%; padding: 8px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
+        button { 
+            padding: 12px 20px; 
+            background: #3498db; 
+            color: white; 
+            border: none; 
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 20px;
+            border-radius: 4px;
+            transition: background 0.3s;
+            width: 100%;
+        }
+        button:hover { background: #2980b9; }
+        .two-columns { display: flex; gap: 20px; }
+        .column { flex: 1; }
+        @media (max-width: 768px) {
+            .two-columns { flex-direction: column; }
+        }
     </style>
 </head>
 <body>
-    <div class="form-section">
-        <h2>Informations Entreprise</h2>
-        <label for="nomEntreprise">Nom de l'entreprise</label>
-        <input type="text" id="nomEntreprise" value="SOCIETE RUE ANONYME">
-        <label for="adresseEntreprise">Adresse</label>
-        <input type="text" id="adresseEntreprise" value="4 RUE DE LA PAIX">
-        <label for="villeEntreprise">Ville</label>
-        <input type="text" id="villeEntreprise" value="70015 PARIS">
-        <label for="siret">SIRET</label>
-        <input type="text" id="siret" value="1234567890002">
-        <label for="telEntreprise">Téléphone</label>
-        <input type="text" id="telEntreprise" value="01 23 45 67 89">
+    <div class="form-container">
+        <h1>Générateur de Bulletin de Paie</h1>
+        
+        <div class="form-section">
+            <h2>Informations Entreprise</h2>
+            <div class="two-columns">
+                <div class="column">
+                    <label for="nomEntreprise">Nom de l'entreprise</label>
+                    <input type="text" id="nomEntreprise" value="SOCIETE RUE ANONYME" required>
+                    
+                    <label for="siret">SIRET</label>
+                    <input type="text" id="siret" value="1234567890002" required>
+                    
+                    <label for="codeNAF">Code NAF (APE)</label>
+                    <input type="text" id="codeNAF" value="6201Z">
+                </div>
+                <div class="column">
+                    <label for="adresseEntreprise">Adresse</label>
+                    <input type="text" id="adresseEntreprise" value="4 RUE DE LA PAIX" required>
+                    
+                    <label for="villeEntreprise">Code Postal et Ville</label>
+                    <input type="text" id="villeEntreprise" value="75015 PARIS" required>
+                    
+                    <label for="telEntreprise">Téléphone</label>
+                    <input type="tel" id="telEntreprise" value="01 23 45 67 89">
+                </div>
+            </div>
+        </div>
 
-        <h2>Informations Salarié</h2>
-        <label for="nomSalarie">Nom du salarié</label>
-        <input type="text" id="nomSalarie" value="JEROME DUBOIS">
-        <label for="adresseSalarie">Adresse</label>
-        <input type="text" id="adresseSalarie" value="4 rue de la paix">
-        <label for="villeSalarie">Ville</label>
-        <input type="text" id="villeSalarie" value="70015 Paris">
-        <label for="emailSalarie">Email</label>
-        <input type="text" id="emailSalarie" value="jerome.dubois@email.com">
-        <label for="telSalarie">Téléphone</label>
-        <input type="text" id="telSalarie" value="06 12 34 56 78">
-        <label for="secuSalarie">N° Sécurité Sociale</label>
-        <input type="text" id="secuSalarie" value="2 2800000000000">
+        <div class="form-section">
+            <h2>Informations Salarié</h2>
+            <div class="two-columns">
+                <div class="column">
+                    <label for="nomSalarie">Nom</label>
+                    <input type="text" id="nomSalarie" value="DUBOIS" required>
+                    
+                    <label for="prenomSalarie">Prénom</label>
+                    <input type="text" id="prenomSalarie" value="Jérôme" required>
+                    
+                    <label for="matricule">Matricule</label>
+                    <input type="text" id="matricule" value="EMP001">
+                    
+                    <label for="secuSalarie">N° Sécurité Sociale</label>
+                    <input type="text" id="secuSalarie" value="1 23 45 67 891 234" required>
+                </div>
+                <div class="column">
+                    <label for="adresseSalarie">Adresse</label>
+                    <input type="text" id="adresseSalarie" value="4 rue de la paix">
+                    
+                    <label for="villeSalarie">Code Postal et Ville</label>
+                    <input type="text" id="villeSalarie" value="75015 PARIS">
+                    
+                    <label for="dateEntree">Date d'entrée</label>
+                    <input type="date" id="dateEntree" value="2018-01-01">
+                    
+                    <label for="poste">Poste occupé</label>
+                    <input type="text" id="poste" value="Développeur">
+                </div>
+            </div>
+        </div>
 
-        <h2>Période et Salaire</h2>
-        <label for="mois">Mois</label>
-        <input type="text" id="mois" value="04">
-        <label for="annee">Année</label>
-        <input type="text" id="annee" value="2025">
-        <label for="salaireBrut">Salaire Brut</label>
-        <input type="text" id="salaireBrut" value="2778.98">
+        <div class="form-section">
+            <h2>Période et Rémunération</h2>
+            <div class="two-columns">
+                <div class="column">
+                    <label for="dateDebut">Date de début</label>
+                    <input type="date" id="dateDebut" value="2025-01-01" required>
+                    
+                    <label for="dateFin">Date de fin</label>
+                    <input type="date" id="dateFin" value="2025-01-31" required>
+                    
+                    <label for="heuresTravaillees">Heures travaillées</label>
+                    <input type="number" id="heuresTravaillees" value="151.67" step="0.01">
+                </div>
+                <div class="column">
+                    <label for="salaireBrut">Salaire brut</label>
+                    <input type="number" id="salaireBrut" value="2778.98" step="0.01" required>
+                    
+                    <label for="heuresSupplementaires">Heures supplémentaires</label>
+                    <input type="number" id="heuresSupplementaires" value="10" step="0.5">
+                    
+                    <label for="tauxHoraire">Taux horaire (€)</label>
+                    <input type="number" id="tauxHoraire" value="17.39" step="0.01">
+                </div>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h2>Éléments Variables</h2>
+            <div class="two-columns">
+                <div class="column">
+                    <label for="primeAnciennete">Prime d'ancienneté</label>
+                    <input type="number" id="primeAnciennete" value="140.85" step="0.01">
+                    
+                    <label for="titreRestaurant">Titres restaurant (nombre)</label>
+                    <input type="number" id="titreRestaurant" value="22">
+                    
+                    <label for="indemniteTransport">Indemnité transport (€)</label>
+                    <input type="number" id="indemniteTransport" value="65.20" step="0.01">
+                </div>
+                <div class="column">
+                    <label for="forfaitTeletravail">Forfait télétravail (€)</label>
+                    <input type="number" id="forfaitTeletravail" value="7.00" step="0.01">
+                    
+                    <label for="autrePrime">Autre prime (€)</label>
+                    <input type="number" id="autrePrime" value="0" step="0.01">
+                    
+                    <label for="tauxPAS">Taux prélèvement à la source (%)</label>
+                    <input type="number" id="tauxPAS" value="5" step="0.1">
+                </div>
+            </div>
+        </div>
 
         <button onclick="genererPDF()">Générer la fiche de paie</button>
     </div>
 
     <script>
-        window.onload = function () {
-            const { jsPDF } = window.jspdf;
-
-            window.genererPDF = function () {
-                const doc = new jsPDF();
-                const salaireBrut = parseFloat(document.getElementById("salaireBrut").value);
-                const periode = `Période : ${document.getElementById("mois").value}/${document.getElementById("annee").value}`;
-
-                const lignesPaie = [
-                    ["Salaire de base", "151.67h", "17.3939", "", salaireBrut.toFixed(2), ""],
-                    ["Maladie - maternité - invalidité - décès", salaireBrut, "0.75%", (salaireBrut * 0.0075).toFixed(2), "", (salaireBrut * 0.013).toFixed(2)],
-                    ["Assurance vieillesse déplafonnée", salaireBrut, "0.40%", (salaireBrut * 0.004).toFixed(2), "", (salaireBrut * 0.018).toFixed(2)],
-                    ["Assurance chômage", salaireBrut, "2.4%", (salaireBrut * 0.024).toFixed(2), "", (salaireBrut * 0.04).toFixed(2)],
-                    ["Retraite complémentaire", salaireBrut, "3.15%", (salaireBrut * 0.0315).toFixed(2), "", (salaireBrut * 0.08).toFixed(2)],
-                    ["CSG déductible", salaireBrut, "6.8%", (salaireBrut * 0.068).toFixed(2), "", ""],
-                    ["CSG/CRDS non déductible", salaireBrut, "2.9%", (salaireBrut * 0.029).toFixed(2), "", ""],
-                    ["Impôt sur le revenu prélevé à la source", salaireBrut, "5%", (salaireBrut * 0.05).toFixed(2), "", ""]
-                ];
-
-                const totalSalarial = lignesPaie.reduce((acc, l) => acc + parseFloat(l[3] || 0), 0);
-                const totalPatronal = lignesPaie.reduce((acc, l) => acc + parseFloat(l[5] || 0), 0);
-                const netAPayer = +(salaireBrut - totalSalarial).toFixed(2);
-
-                lignesPaie.push(["", "", "TOTAL", totalSalarial.toFixed(2), netAPayer.toFixed(2), totalPatronal.toFixed(2)]);
-                lignesPaie.push(["NET À PAYER EN EUROS", "", "", "", netAPayer.toFixed(2), ""]);
-
-                doc.setFontSize(14);
-                doc.text("BULLETIN DE SALAIRE", 105, 10, { align: 'center' });
-                doc.setFontSize(10);
-                doc.text(periode, 105, 16, { align: 'center' });
-
-                doc.setFont(undefined, 'bold');
-                doc.text("Entreprise :", 15, 25);
-                doc.text("Salarié :", 115, 25);
-                doc.setFont(undefined, 'normal');
-
-                const infosEntreprise = [
-                    document.getElementById("nomEntreprise").value,
-                    document.getElementById("adresseEntreprise").value,
-                    document.getElementById("villeEntreprise").value,
-                    "SIRET : " + document.getElementById("siret").value,
-                    "Téléphone : " + document.getElementById("telEntreprise").value
-                ];
-
-                const infosSalarie = [
-                    document.getElementById("nomSalarie").value,
-                    document.getElementById("adresseSalarie").value,
-                    document.getElementById("villeSalarie").value,
-                    "Email : " + document.getElementById("emailSalarie").value,
-                    "Téléphone : " + document.getElementById("telSalarie").value,
-                    "N° SS : " + document.getElementById("secuSalarie").value
-                ];
-
-                infosEntreprise.forEach((line, index) => {
-                    doc.text(line, 15, 30 + index * 5);
-                });
-
-                infosSalarie.forEach((line, index) => {
-                    doc.text(line, 115, 30 + index * 5);
-                });
-
-                doc.autoTable({
-                    startY: 65,
-                    head: [["Éléments de paie", "Base", "Taux", "À déduire", "À payer", "Charges patronales"]],
-                    body: lignesPaie,
-                    margin: { left: 15 },
-                    styles: { fontSize: 8, cellPadding: 2 },
-                    headStyles: { fillColor: [33, 64, 154], textColor: [255, 255, 255] }
-                });
-
-                doc.save("bulletin_paie.pdf");
-            }
-        };
-    </script>
-</body>
-</html>
+        const { jsPDF } = window.jspdf;
+        
+        function genererPDF() {
+            // Récupération des valeurs du formulaire
+            const entreprise = document.getElementById('nomEntreprise').value;
+            const siret = document.getElementById('siret').value;
+            const adresseEntreprise = document.getElementById('adresseEntreprise').value;
+            const villeEntreprise = document.getElementById('villeEntreprise').value;
+            const telEntreprise = document.getElementById('telEntreprise').value;
+            
+            const nomSalarie = document.getElementById('nomSalarie').value;
+            const prenomSalarie = document.getElementById('prenomSalarie').value;
+            const matricule = document.getElementById('matricule').value;
+            const secuSalarie = document.getElementById('secuSalarie').value;
+            const adresseSalarie = document.getElementById('adresseSalarie').value;
+            const villeSalarie = document.getElementById('villeSalarie').value;
+            const dateEntree = new Date(document.getElementById('dateEntree').value).toLocaleDateString('fr-FR');
+            const poste = document.getElementById('poste').value;
+            
+            const dateDebut = new Date(document.getElementById('dateDebut').value).toLocaleDateString('fr-FR');
+            const dateFin = new Date(document.getElementById('dateFin').value).toLocaleDateString('fr-FR');
+            const heuresTravaillees = parseFloat(document.getElementById('heuresTravaillees').value);
+            const salaireBrut = parseFloat(document.getElementById('salaireBrut').value);
+            const heuresSupplementaires = parseFloat(document.getElementById('heuresSupplementaires').value);
+            const tauxHoraire = parseFloat(document.getElementById('tauxHoraire').value);
+            
+            const primeAnciennete = parseFloat(document.getElementById('primeAnciennete').value);
+            const titreRestaurant = parseInt(document.getElementById('titreRestaurant').value);
+            const indemniteTransport = parseFloat(document.getElementById('indemniteTransport').value);
+            const forfaitTeletravail = parseFloat(document.getElementById('forfaitTeletravail').value);
+            const autrePrime = parseFloat(document.getElementById('autrePrime').value);
+            const tauxPAS = parseFloat(document.getElementById('tauxPAS').value) / 100;
+            
+            // Calculs des éléments de paie
+            const plafondSS = 3428; // Plafond mensuel Sécurité Sociale 2023
+            const baseSS = Math.min(salaireBrut, plafondSS);
+            
+            // Cotisations salariales (taux 2023)
+            const cotisations = {
+                maladie: baseSS * 0.0075,
+                vieillessePlafonnee: baseSS * 0.069,
+                vieillesseDeplafonnee: salaireBrut * 0.004,
+                famille: salaireBrut * 0.0345,
+                atmp: salaireBrut * 0.009,
+                retraiteComplementaire: baseSS * 0.0401,
+                agff: baseSS * 0.008,
+                chomage: baseSS * 0.024,
+                csgDeductible: salaireBrut * 0.068,
+                csgNonDeductible: salaireBrut * 0.029,
+                crds: salaireBrut * 0.005,
+                pas: salaireBrut * tauxPAS
+            };
+            
+            // Cotisations patronales (taux 2023)
+            const cotisationsPatronales = {
+                maladie: baseSS * 0.13,
+                vieillessePlafonnee: baseSS * 0.0855,
+                vieillesseDeplafonnee: salaireBrut * 0.019,
+                famille: salaireBrut * 0.0345,
+                atmp: salaireBrut * 0.009,
+                retraiteComplementaire: baseSS * 0.0601,
+                agff: baseSS * 0.008,
+                chomage: baseSS * 0.042,
+                forfaitSocial: 0.02
+            };
+            
+            // Calcul du total des cotisations
+            const totalCotisationsSalariales = Object.values(cotisations).reduce((a, b) => a + b, 0);
+            const totalCotisationsPatronales = Object.values(cotisationsPatronales).reduce((a, b) => a + b, 0);
+            
+            // Calcul des heures supplémentaires (25%)
+            const montantHeuresSupp = heuresSupplementaires * tauxHoraire * 1.25;
+            
+            // Total brut
+            const totalBrut = salaireBrut + primeAnciennete + montantHeuresSupp + forfaitTeletravail + autrePrime;
+            
+            // Net à payer
+            const netAPayer = totalBrut - totalCotisationsSalariales;
+            
+            // Création du PDF
+            const doc = new jsPDF();
+            
+            // En-tête
+            doc.setFontSize(16);
+            doc.text("BULLETIN DE PAIE", 105, 15, { align: 'center' });
+            
+            // Période
+            doc.setFontSize(12);
+            doc.text(`Période du ${dateDebut} au ${dateFin}`, 105, 22, { align: 'center' });
+            
+            // Informations entreprise/salarié
+            doc.setFontSize(10);
+            
+            // Colonne Entreprise
+            doc.text("Entreprise", 20, 32);
+            doc.text(`${entreprise}`, 20, 37);
+            doc.text(`${adresseEntreprise}`, 20, 42);
+            doc.text(`${villeEntreprise}`, 20, 47);
+            doc.text(`SIRET: ${siret}`, 20, 52);
+            doc.text(`Tél: ${telEntreprise}`, 20, 57);
+            
+            // Colonne Salarié
+            doc.text("Salarié", 120, 32);
+            doc.text(`${nomSalarie} ${prenomSalarie}`, 120, 37);
+            doc.text(`Matricule: ${matricule}`, 120, 42);
+            doc.text(`N° SS: ${secuSalarie}`, 120, 47);
+            doc.text(`Entré le: ${dateEntree}`, 120, 52);
+            doc.text(`Poste: ${poste}`, 120, 57);
+            
+            // Ligne de séparation
+            doc.line(20, 62, 190, 62);
+            
+            // Tableau des éléments de paie
+            doc.autoTable({
+                startY: 67,
+                head: [['Éléments', 'Base', 'Taux', 'A déduire', 'A payer', 'Charges patronales']],
+                body: [
+                    ['Salaire de base', heuresTravaillees.toFixed(2) + 'h', tauxHoraire.toFixed(2) + '€', '', salaireBrut.toFixed(2) + '€', ''],
+                    ['Prime ancienneté', '', '', '', primeAnciennete.toFixed(2) + '€', ''],
+                    ['Heures supplémentaires', heuresSupplementaires + 'h', (tauxHoraire * 1.25).toFixed(2) + '€', '', montantHeuresSupp.toFixed(2) + '€', ''],
+                    ['Forfait télétravail', '', '', '', forfaitTeletravail.toFixed(2) + '€', ''],
+                    ['Total brut', '', '', '', totalBrut.toFixed(2) + '€', ''],
+                    ['', '', '', '', '', ''],
+                    ['Cotisations salariales', '', '', '', '', ''],
+                    ['Maladie', baseSS.toFixed(2) + '€', '0.75%', cotisations.maladie.toFixed(2) + '€', '', cotisationsPatronales.maladie.toFixed(2) + '€'],
+                    ['Vieillesse plafonnée', baseSS.toFixed(2) + '€', '6.90%', cotisations.vieillessePlafonnee.toFixed(2) + '€', '', cotisationsPatronales.vieillessePlafonnee.toFixed(2) + '€'],
+                    ['Vieillesse déplafonnée', salaireBrut.toFixed(2) + '€', '0.40%', cotisations.vieillesseDeplafonnee.toFixed(2) + '€', '', cotisationsPatronales.vieillesseDeplafonnee.toFixed(2) + '€'],
+                    ['Famille', salaireBrut.toFixed(2) + '€', '3.45%', cotisations.famille.toFixed(2) + '€', '', cotisationsPatronales.famille.toFixed(2) + '€'],
+                    ['Accidents du travail', salaireBrut.toFixed(2) + '€', '0.90%', '', '', cotisationsPatronales.atmp.toFixed(2) + '€'],
+                    ['Chômage', baseSS.toFixed(2) + '€', '2.40%', cotisations.chomage.toFixed(2) + '€', '', cotisationsPatronales.chomage.toFixed(2) + '€'],
+                    ['Retraite complémentaire', baseSS.toFixed(2) + '€', '4.01%', cotisations.retraiteComplementaire.toFixed(2) + '€', '', cotisationsPatronales.retraiteComplementaire.toFixed(2) + '€'],
+                    ['AGFF', baseSS.toFixed(2) + '€', '0.80%', cotisations.agff.toFixed(2) + '€', '', cotisationsPatronales.agff.toFixed(2) + '€'],
+                    ['CSG déductible', salaireBrut.toFixed(2) + '€', '6.80%', cotisations.csgDeductible.toFixed(2) + '€', '', ''],
+                    ['CSG/CRDS non déductible', salaireBrut.toFixed(2) + '€', '3.40%', (cotisations.csgNonDeductible + cotisations.crds).toFixed(2) + '€', '', ''],
+                    ['Prélèvement à la source', salaireBrut.toFixed(2) + '€', (tauxPAS * 100).toFixed(1) + '%', cotisations.pas.toFixed(2) + '€', '', ''],
+                    ['', '', '', '', '', ''],
+                    ['Total cotisations', '', '', totalCotisationsSalariales.toFixed(2) + '€', '', totalCotisationsPatronales.toFixed(2) + '€'],
+                    ['', '', '', '', '', ''],
+                    ['Avantages en nature', '', '', '', '', ''],
+                    ['Titres restaurant', titreRestaurant + ' unités', '3.60€', (titreRestaurant * 3.6 * 0.5).toFixed(2) + '€', '', (titreRestaurant * 3.6 * 0.
