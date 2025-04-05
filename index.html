@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Paie - Générez votre Fiche de Paie</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f8f9fa;
+    }
+    header {
+      background-color: #4CAF50;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+    }
+    main {
+      padding: 2rem;
+      max-width: 800px;
+      margin: auto;
+      background: white;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      margin-top: 2rem;
+      border-radius: 8px;
+    }
+    label {
+      display: block;
+      margin-top: 1rem;
+    }
+    input, select {
+      width: 100%;
+      padding: 0.5rem;
+      margin-top: 0.5rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    button {
+      margin-top: 2rem;
+      padding: 1rem;
+      width: 100%;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    footer {
+      text-align: center;
+      padding: 1rem;
+      margin-top: 2rem;
+      font-size: 0.9rem;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Paie</h1>
+    <p>Générez facilement votre fiche de paie</p>
+  </header>
+
+  <main>
+    <h2>Informations Salarié</h2>
+    <form id="paieForm">
+      <label for="nom">Nom :</label>
+      <input type="text" id="nom" name="nom" required>
+
+      <label for="adresse">Adresse :</label>
+      <input type="text" id="adresse" name="adresse" required>
+
+      <label for="poste">Poste :</label>
+      <input type="text" id="poste" name="poste" required>
+
+      <label for="salaire">Salaire brut (€) :</label>
+      <input type="number" id="salaire" name="salaire" required>
+
+      <label for="mois">Mois :</label>
+      <select id="mois" name="mois" required>
+        <option value="janvier">Janvier</option>
+        <option value="fevrier">Février</option>
+        <option value="mars">Mars</option>
+        <option value="avril">Avril</option>
+        <option value="mai">Mai</option>
+        <option value="juin">Juin</option>
+        <option value="juillet">Juillet</option>
+        <option value="aout">Août</option>
+        <option value="septembre">Septembre</option>
+        <option value="octobre">Octobre</option>
+        <option value="novembre">Novembre</option>
+        <option value="decembre">Décembre</option>
+      </select>
+
+      <button type="submit">Générer la fiche de paie</button>
+    </form>
+
+    <div id="fichePaie" style="margin-top:2rem;"></div>
+  </main>
+
+  <footer>
+    &copy; 2025 Paie. Tous droits réservés.
+  </footer>
+
+  <script>
+    document.getElementById('paieForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+
+      const nom = document.getElementById('nom').value;
+      const adresse = document.getElementById('adresse').value;
+      const poste = document.getElementById('poste').value;
+      const salaire = parseFloat(document.getElementById('salaire').value);
+      const mois = document.getElementById('mois').value;
+
+      const secu = (salaire * 0.073).toFixed(2);
+      const retraite = (salaire * 0.035).toFixed(2);
+      const csg = (salaire * 0.097).toFixed(2);
+      const chomage = (salaire * 0.024).toFixed(2);
+
+      const cotisations = (parseFloat(secu) + parseFloat(retraite) + parseFloat(csg) + parseFloat(chomage)).toFixed(2);
+      const netAvantImpots = (salaire - cotisations).toFixed(2);
+      const prelevementSource = (netAvantImpots * 0.10).toFixed(2);
+      const netAPayer = (netAvantImpots - prelevementSource).toFixed(2);
+
+      document.getElementById('fichePaie').innerHTML = `
+        <h3>Fiche de Paie - ${mois.charAt(0).toUpperCase() + mois.slice(1)} 2025</h3>
+        <p><strong>Nom :</strong> ${nom}</p>
+        <p><strong>Adresse :</strong> ${adresse}</p>
+        <p><strong>Poste :</strong> ${poste}</p>
+        <hr>
+        <p><strong>Salaire brut :</strong> ${salaire.toFixed(2)} €</p>
+        <p><strong>Cotisations :</strong> -${cotisations} €</p>
+        <p><strong>Net avant impôts :</strong> ${netAvantImpots} €</p>
+        <p><strong>Prélèvement à la source :</strong> -${prelevementSource} €</p>
+        <p><strong>Net à payer :</strong> ${netAPayer} €</p>
+      `;
+    });
+  </script>
+</body>
+</html>
