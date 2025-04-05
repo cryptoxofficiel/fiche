@@ -27,19 +27,18 @@
         
         function genererPDF() {
             const doc = new jsPDF();
-            const moisAnnee = "Mai 2023"; // À adapter
             
             // Configuration
             doc.setProperties({
-                title: 'Bulletin de paie ' + moisAnnee,
+                title: 'Bulletin de paie',
                 subject: 'Bulletin de salaire',
                 author: 'Entreprise',
                 keywords: 'paie, salaire, bulletin'
             });
             
-            // Titre avec période
+            // Titre principal
             doc.setFontSize(16);
-            doc.text("BULLETIN DE PAIE - " + moisAnnee, 105, 15, { align: 'center' });
+            doc.text("BULLETIN DE PAIE", 105, 15, { align: 'center' });
             
             // Informations entreprise/salarié côte à côte
             doc.setFontSize(10);
@@ -63,13 +62,33 @@
             // Ligne de séparation
             doc.line(20, 55, 190, 55);
             
-            // Tableau éléments de paie COMPLET
+            // Tableau récapitulatif en haut
+            doc.autoTable({
+                startY: 60,
+                head: [['Période', 'Heures', 'Brut', 'Plafond S.S.', 'Net imposable', 'Ch. nationales', 'Coût Global']],
+                body: [
+                    ['Mensuel', '151.67', '2 778.98', '3 428.00', '2 259.23', '1 262.19', '4 080.77'],
+                    ['Annuel', '1 213.36', '23 894.56', '27 424.00', '19 430.05', '10 603.69', '34 827.05']
+                ],
+                margin: { left: 15 },
+                styles: { 
+                    fontSize: 8,
+                    cellPadding: 3
+                },
+                headStyles: { 
+                    fillColor: [220, 220, 220],
+                    textColor: [0, 0, 0],
+                    fontStyle: 'bold'
+                }
+            });
+            
+            // Tableau éléments de paie (avec "Période" comme titre)
             doc.setFontSize(12);
-            doc.text("ÉLÉMENTS DE PAIE", 20, 65);
+            doc.text("PÉRIODE", 20, doc.lastAutoTable.finalY + 10);
             
             doc.autoTable({
-                startY: 70,
-                head: [['Éléments de paie', 'Base', 'Taux', 'A déduire', 'A payer', 'Charges patronales']],
+                startY: doc.lastAutoTable.finalY + 15,
+                head: [['Éléments', 'Base', 'Taux', 'A déduire', 'A payer', 'Charges patronales']],
                 body: [
                     ['Salaire de base', '151.67', '17.3939', '', '2 638.13', ''],
                     ['Prime d\'ancienneté', '', '', '', '140.85', ''],
@@ -119,29 +138,6 @@
                 }
             });
             
-            // Récapitulatif complet
-            doc.setFontSize(12);
-            doc.text("RÉCAPITULATIF", 20, doc.lastAutoTable.finalY + 10);
-            
-            doc.autoTable({
-                startY: doc.lastAutoTable.finalY + 15,
-                head: [['', 'Heures', 'Brut', 'Plafond S.S.', 'Net imposable', 'Ch. nationales', 'Coût Global']],
-                body: [
-                    ['Mensuel', '151.67', '2 778.98', '3 428.00', '2 259.23', '1 262.19', '4 080.77'],
-                    ['Annuel', '1 213.36', '23 894.56', '27 424.00', '19 430.05', '10 603.69', '34 827.05']
-                ],
-                margin: { left: 15 },
-                styles: { 
-                    fontSize: 8,
-                    cellPadding: 3
-                },
-                headStyles: { 
-                    fillColor: [220, 220, 220],
-                    textColor: [0, 0, 0],
-                    fontStyle: 'bold'
-                }
-            });
-            
             // Signature
             doc.text("Le salarié", 40, 270);
             doc.text("_________________________", 40, 275);
@@ -155,7 +151,7 @@
             doc.text("Convention collective : Métiers du tertiaire", 105, 285, { align: 'center' });
             
             // Sauvegarde
-            doc.save('bulletin_paie_' + moisAnnee.replace(' ', '_') + '.pdf');
+            doc.save('bulletin_paie.pdf');
         }
     </script>
 </body>
