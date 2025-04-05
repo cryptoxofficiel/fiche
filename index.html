@@ -3,27 +3,298 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Générateur de Fiche de Paie</title>
-    <link rel="stylesheet" href="style.css">
+    <title>MonLogicielPaie - Gratuit</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f7fa;
+            color: #333;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 5px;
+        }
+        .section-title {
+            font-size: 1.2em;
+            color: #3498db;
+            margin-top: 0;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 16px;
+            display: block;
+            margin: 20px auto;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        #result {
+            background: #e8f4fc;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+            display: none;
+        }
+        .hidden {
+            display: none;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <h1>Générateur de Fiche de Paie</h1>
-        <form id="payrollForm">
-            <label for="name">Nom de l'employé:</label>
-            <input type="text" id="name" required>
-            <label for="position">Poste:</label>
-            <input type="text" id="position" required>
-            <label for="salary">Salaire Brut:</label>
-            <input type="number" id="salary" required>
-            <label for="hours">Heures Travaillées:</label>
-            <input type="number" id="hours" required>
-            <button type="submit">Générer la Fiche de Paie</button>
-        </form>
+        <h1>Mon Logiciel de Paie Gratuit</h1>
         
-        <div id="payrollResult"></div>
+        <!-- Section Entreprise -->
+        <div class="section">
+            <h2 class="section-title">Informations Entreprise</h2>
+            <div class="form-group">
+                <label for="entreprise-nom">Nom de l'entreprise</label>
+                <input type="text" id="entreprise-nom" required>
+            </div>
+            <div class="form-group">
+                <label for="entreprise-siret">SIRET</label>
+                <input type="text" id="entreprise-siret" required>
+            </div>
+            <div class="form-group">
+                <label for="entreprise-adresse">Adresse</label>
+                <input type="text" id="entreprise-adresse" required>
+            </div>
+        </div>
+        
+        <!-- Section Salarié -->
+        <div class="section">
+            <h2 class="section-title">Informations Salarié</h2>
+            <div class="form-group">
+                <label for="salarie-nom">Nom</label>
+                <input type="text" id="salarie-nom" required>
+            </div>
+            <div class="form-group">
+                <label for="salarie-prenom">Prénom</label>
+                <input type="text" id="salarie-prenom" required>
+            </div>
+            <div class="form-group">
+                <label for="salarie-matricule">Matricule</label>
+                <input type="text" id="salarie-matricule">
+            </div>
+            <div class="form-group">
+                <label for="salarie-poste">Poste</label>
+                <input type="text" id="salarie-poste">
+            </div>
+        </div>
+        
+        <!-- Section Période et Salaire -->
+        <div class="section">
+            <h2 class="section-title">Période et Rémunération</h2>
+            <div class="form-group">
+                <label for="periode-debut">Date de début</label>
+                <input type="date" id="periode-debut" required>
+            </div>
+            <div class="form-group">
+                <label for="periode-fin">Date de fin</label>
+                <input type="date" id="periode-fin" required>
+            </div>
+            <div class="form-group">
+                <label for="salaire-brut">Salaire brut (€)</label>
+                <input type="number" id="salaire-brut" step="0.01" required>
+            </div>
+        </div>
+        
+        <button onclick="calculerPaie()">Calculer la paie</button>
+        
+        <!-- Résultats -->
+        <div id="result">
+            <h2>Résultats du calcul</h2>
+            <div id="result-details"></div>
+            <button onclick="genererPDF()">Générer le bulletin en PDF</button>
+            <div id="pdf-preview" class="hidden"></div>
+        </div>
     </div>
 
-    <script src="app.js"></script>
+    <script>
+        // Calcul des cotisations (taux simplifiés)
+        const COTISATIONS = {
+            "sociales": 0.22, // 22% pour les cotisations salariales
+            "csg": 0.029, // 2.9% CSG déductible
+            "retenue": 0.1 // 10% pour impôt à la source (simplifié)
+        };
+
+        function calculerPaie() {
+            // Récupération des valeurs
+            const brut = parseFloat(document.getElementById('salaire-brut').value);
+            
+            // Calculs
+            const cotisationsSociales = brut * COTISATIONS.sociales;
+            const csg = brut * COTISATIONS.csg;
+            const retenue = brut * COTISATIONS.retenue;
+            const net = brut - cotisationsSociales - csg - retenue;
+            
+            // Affichage des résultats
+            const resultDiv = document.getElementById('result-details');
+            resultDiv.innerHTML = `
+                <h3>Détails du calcul</h3>
+                <table>
+                    <tr>
+                        <th>Salaire brut</th>
+                        <td>${brut.toFixed(2)} €</td>
+                    </tr>
+                    <tr>
+                        <th>Cotisations sociales (${(COTISATIONS.sociales*100).toFixed(1)}%)</th>
+                        <td>- ${cotisationsSociales.toFixed(2)} €</td>
+                    </tr>
+                    <tr>
+                        <th>CSG (${(COTISATIONS.csg*100).toFixed(1)}%)</th>
+                        <td>- ${csg.toFixed(2)} €</td>
+                    </tr>
+                    <tr>
+                        <th>Retenue à la source (${(COTISATIONS.retenue*100).toFixed(1)}%)</th>
+                        <td>- ${retenue.toFixed(2)} €</td>
+                    </tr>
+                    <tr>
+                        <th><strong>Salaire net</strong></th>
+                        <td><strong>${net.toFixed(2)} €</strong></td>
+                    </tr>
+                </table>
+            `;
+            
+            document.getElementById('result').style.display = 'block';
+        }
+
+        function genererPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            // Entête
+            doc.setFontSize(16);
+            doc.text("BULLETIN DE PAIE", 105, 15, { align: 'center' });
+            doc.setFontSize(10);
+            
+            // Informations entreprise
+            doc.text("Employeur:", 20, 25);
+            doc.text(document.getElementById('entreprise-nom').value, 20, 30);
+            doc.text(`SIRET: ${document.getElementById('entreprise-siret').value}`, 20, 35);
+            doc.text(document.getElementById('entreprise-adresse').value, 20, 40);
+            
+            // Informations salarié
+            doc.text("Salarié:", 120, 25);
+            doc.text(`${document.getElementById('salarie-prenom').value} ${document.getElementById('salarie-nom').value}`, 120, 30);
+            doc.text(`Matricule: ${document.getElementById('salarie-matricule').value || 'NC'}`, 120, 35);
+            doc.text(`Poste: ${document.getElementById('salarie-poste').value || 'NC'}`, 120, 40);
+            
+            // Période
+            doc.text("Période:", 20, 50);
+            doc.text(`${document.getElementById('periode-debut').value} au ${document.getElementById('periode-fin').value}`, 20, 55);
+            
+            // Ligne de séparation
+            doc.line(20, 60, 190, 60);
+            
+            // Détails paie
+            doc.setFontSize(12);
+            doc.text("DÉTAIL DE LA PAIE", 20, 70);
+            
+            const brut = parseFloat(document.getElementById('salaire-brut').value);
+            const cotisationsSociales = brut * COTISATIONS.sociales;
+            const csg = brut * COTISATIONS.csg;
+            const retenue = brut * COTISATIONS.retenue;
+            const net = brut - cotisationsSociales - csg - retenue;
+            
+            // Tableau des éléments de paie
+            doc.autoTable({
+                startY: 75,
+                head: [['Libellé', 'Montant (€)']],
+                body: [
+                    ['Salaire brut', brut.toFixed(2)],
+                    [`Cotisations sociales (${(COTISATIONS.sociales*100).toFixed(1)}%)`, `- ${cotisationsSociales.toFixed(2)}`],
+                    [`CSG (${(COTISATIONS.csg*100).toFixed(1)}%)`, `- ${csg.toFixed(2)}`],
+                    [`Retenue à la source (${(COTISATIONS.retenue*100).toFixed(1)}%)`, `- ${retenue.toFixed(2)}`],
+                    ['SALAIRE NET À PAYER', net.toFixed(2)]
+                ],
+                styles: {
+                    fontSize: 10,
+                    cellPadding: 5,
+                    valign: 'middle'
+                },
+                headStyles: {
+                    fillColor: [52, 152, 219],
+                    textColor: 255
+                },
+                columnStyles: {
+                    1: { halign: 'right' }
+                },
+                didDrawCell: (data) => {
+                    if (data.section === 'body' && data.row.index === 4) {
+                        data.cell.styles.fontStyle = 'bold';
+                    }
+                }
+            });
+            
+            // Pied de page
+            doc.setFontSize(8);
+            doc.text("Document généré automatiquement par MonLogicielPaie - www.monlogicielpaie.com", 105, 285, { align: 'center' });
+            
+            // Affichage preview (optionnel)
+            const pdfPreview = document.getElementById('pdf-preview');
+            pdfPreview.innerHTML = `<iframe style="width:100%; height:500px;" src="${doc.output('datauristring')}"></iframe>`;
+            pdfPreview.classList.remove('hidden');
+            
+            // Téléchargement automatique
+            doc.save(`bulletin_paie_${document.getElementById('salarie-nom').value}_${document.getElementById('periode-debut').value}.pdf`);
+        }
+    </script>
 </body>
 </html>
