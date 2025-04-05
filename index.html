@@ -3,50 +3,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fihe-Pay - Générateur de Fiche de Paie</title>
+    <title>Fiche de Paie - Fihe-Pay</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <header>
-        <h1>Fihe-Pay</h1>
-        <p>Générez gratuitement votre fiche de paie conforme aux lois françaises.</p>
+        <h1>BULLETIN DE SALAIRE</h1>
+        <p>Période : 10/2023</p>
     </header>
 
     <main>
-        <!-- Formulaire pour générer la fiche de paie -->
-        <section id="form-section">
-            <h2>Générer une Fiche de Paie</h2>
-            <form id="pay-slip-form">
-                <label for="employeeName">Nom du salarié :</label>
-                <input type="text" id="employeeName" name="employeeName" required>
-
-                <label for="grossSalary">Salaire brut mensuel (€) :</label>
-                <input type="number" id="grossSalary" name="grossSalary" required>
-
-                <label for="contractType">Type de contrat :</label>
-                <select id="contractType" name="contractType" required>
-                    <option value="cdi">CDI</option>
-                    <option value="cdd">CDD</option>
-                    <option value="part-time">Temps partiel</option>
-                </select>
-
-                <button type="submit">Générer</button>
-            </form>
+        <!-- Informations de l'entreprise -->
+        <section class="entreprise">
+            <h2>SOCIETE RUE ANONYME</h2>
+            <p>4 RUE DE LA PAIX<br>70015 PARIS</p>
+            <p>Siret : 12345678900022<br>Code Naf : 0000Z<br>Urssaf/Msa : 117000000124563879<br>Matricule : 00001<br>N° AS : 0000000000000<br>Iban / Rib : FR76 XXX XXXX XXX</p>
         </section>
 
-        <!-- Section pour afficher la fiche de paie -->
-        <section id="result-section">
-            <h2>Votre Fiche de Paie</h2>
-            <div id="pay-slip-output"></div>
-            <button id="download-pdf" style="display: none;">Télécharger en PDF</button>
+        <!-- Informations du salarié -->
+        <section class="salaries">
+            <h2>Monsieur JEROME DUBOIS</h2>
+            <p>4 rue de la paix<br>70015 Paris</p>
+            <p>Emploi : non cadre<br>Statut professionnel : Employé<br>Niveau : xx<br>Coefficient : xxx<br>Entrée : 01/01/2018<br>Ancienneté : xxxxxxxxxxx</p>
+        </section>
+
+        <!-- Tableau des éléments de paie -->
+        <section class="tableau-paie">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Éléments de paie</th>
+                        <th>Base</th>
+                        <th>Taux</th>
+                        <th>A déduire</th>
+                        <th>A payer</th>
+                        <th>Charges patronales</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Ajoutez ici les lignes du tableau -->
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Récapitulatif annuel -->
+        <section class="recapitulatif">
+            <table>
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Heures</th>
+                        <th>Heures suppl.</th>
+                        <th>Brut</th>
+                        <th>Plafond S.S.</th>
+                        <th>Net imposable</th>
+                        <th>Ch. patronales</th>
+                        <th>Coût Global</th>
+                        <th>Total versé</th>
+                        <th>Allègements</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Ajoutez ici les lignes du récapitulatif -->
+                </tbody>
+            </table>
         </section>
     </main>
 
     <footer>
-        <p>&copy; 2023 Fihe-Pay. Tous droits réservés.</p>
+        <p>Modèle réalisé sur Fihe-Pay.com</p>
     </footer>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
