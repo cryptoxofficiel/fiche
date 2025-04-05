@@ -5,6 +5,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Paie - Générateur de Fiches de Paie</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    .loader {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #3498db;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
 </head>
 <body class="bg-gray-100 min-h-screen flex flex-col">
 
@@ -26,6 +41,10 @@
         <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white p-2 rounded">Générer la fiche de paie</button>
       </form>
     </section>
+
+    <div id="loader" class="flex justify-center items-center hidden mt-6">
+      <div class="loader"></div>
+    </div>
 
     <section id="ficheResult" class="max-w-2xl mx-auto bg-white mt-8 p-6 rounded-lg shadow-md hidden">
       <div class="flex justify-between mb-4">
@@ -57,46 +76,74 @@ const form = document.getElementById('paieForm');
 const ficheResult = document.getElementById('ficheResult');
 const ficheContent = document.getElementById('ficheContent');
 const historyList = document.getElementById('historyList');
+const loader = document.getElementById('loader');
 
 form.addEventListener('submit', e => {
   e.preventDefault();
 
-  const nom = document.getElementById('nom').value;
-  const adresse = document.getElementById('adresse').value;
-  const periode = document.getElementById('periode').value;
-  const salaireBrut = parseFloat(document.getElementById('salaire').value).toFixed(2);
+  loader.classList.remove('hidden');
+  ficheResult.classList.add('hidden');
 
-  const secu = (salaireBrut * 0.073).toFixed(2);
-  const retraite = (salaireBrut * 0.035).toFixed(2);
-  const csg = (salaireBrut * 0.097).toFixed(2);
-  const chomage = (salaireBrut * 0.024).toFixed(2);
-  const totalCotisations = (parseFloat(secu) + parseFloat(retraite) + parseFloat(csg) + parseFloat(chomage)).toFixed(2);
+  setTimeout(() => {
+    const nom = document.getElementById('nom').value;
+    const adresse = document.getElementById('adresse').value;
+    const periode = document.getElementById('periode').value;
+    const salaireBrut = parseFloat(document.getElementById('salaire').value);
 
-  const netAvantImpots = (salaireBrut - totalCotisations).toFixed(2);
-  const impot = (netAvantImpots * 0.10).toFixed(2);
-  const netAPayer = (netAvantImpots - impot).toFixed(2);
+    // Cotisations sociales standards
+    const cotisations = [
+      { libelle: 'Sécurité sociale', taux: 0.073 },
+      { libelle: 'Retraite de base', taux: 0.035 },
+      { libelle: 'CSG/CRDS', taux: 0.097 },
+      { libelle: 'Chômage', taux: 0.024 },
+      { libelle: 'Formation professionnelle', taux: 0.003 },
+      { libelle: 'Mutuelle santé', taux: 0.015 }
+    ];
 
-  ficheContent.innerHTML = `
-    <p><strong>Entreprise :</strong> Paie SARL - www.paie-pro.fr</p>
-    <p><strong>Salarié :</strong> ${nom}</p>
-    <p><strong>Adresse :</strong> ${adresse}</p>
-    <p><strong>Période :</strong> ${periode}</p>
-    <hr>
-    <p><strong>Salaire brut :</strong> ${salaireBrut} €</p>
-    <p><strong>Cotisations :</strong></p>
-    <ul class="list-disc ml-6">
-      <li>Sécurité sociale (7,3%) : -${secu} €</li>
-      <li>Retraite complémentaire (3,5%) : -${retraite} €</li>
-      <li>CSG/CRDS (9,7%) : -${csg} €</li>
-      <li>Assurance chômage (2,4%) : -${chomage} €</li>
-    </ul>
-    <p><strong>Total des cotisations :</strong> -${totalCotisations} €</p>
-    <p><strong>Net à payer avant impôt :</strong> ${netAvantImpots} €</p>
-    <p><strong>Prélèvement à la source (10%) :</strong> -${impot} €</p>
-    <p><strong>Net à payer :</strong> ${netAPayer} €</p>
-  `;
+    let totalCotisations = 0;
+    let rows = '';
 
-  ficheResult.classList.remove('hidden');
+    cotisations.forEach(cotisation => {
+      const montant = (salaireBrut * cotisation.taux).toFixed(2);
+      totalCotisations += parseFloat(montant);
+      rows += `<tr class="border-b"><td class="py-1">${cotisation.libelle}</td><td>${(cotisation.taux * 100).toFixed(1)}%</td><td>-${montant} €</td></tr>`;
+    });
+
+    const netAvantImpots = (salaireBrut - totalCotisations).toFixed(2);
+    const impot = (netAvantImpots * 0.1).toFixed(2);
+    const netAPayer = (netAvantImpots - impot).toFixed(2);
+
+    ficheContent.innerHTML = `
+      <p><strong>Entreprise :</strong> Paie SARL - www.paie-pro.fr</p>
+      <p><strong>Salarié :</strong> ${nom}</p>
+      <p><strong>Adresse :</strong> ${adresse}</p>
+      <p><strong>Période :</strong> ${periode}</p>
+      <hr class="my-2">
+
+      <p><strong>Salaire brut :</strong> ${salaireBrut.toFixed(2)} €</p>
+
+      <table class="w-full text-left text-sm border mt-2">
+        <thead>
+          <tr class="bg-gray-100">
+            <th class="py-1">Cotisation</th>
+            <th>Taux</th>
+            <th>Part Salariale</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${rows}
+        </tbody>
+      </table>
+
+      <p class="mt-2"><strong>Total des cotisations :</strong> -${totalCotisations.toFixed(2)} €</p>
+      <p><strong>Net à payer avant impôt :</strong> ${netAvantImpots} €</p>
+      <p><strong>Prélèvement à la source :</strong> -${impot} €</p>
+      <p><strong>Net à payer :</strong> ${netAPayer} €</p>
+    `;
+
+    loader.classList.add('hidden');
+    ficheResult.classList.remove('hidden');
+  }, 1500);
 });
 
 function downloadPDF() {
