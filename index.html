@@ -30,30 +30,45 @@
                 const doc = new jsPDF();
                 const periode = "Période : 10/2023";
 
-                doc.setFontSize(10);
-                doc.text("SOCIETE RUE ANONYME", 15, 10);
-                doc.text("4 RUE DE LA PAIX", 15, 15);
-                doc.text("70015 PARIS", 15, 20);
-
-                doc.text("Siret : 1234567890002", 15, 30);
-
                 doc.setFontSize(14);
                 doc.text("BULLETIN DE SALAIRE", 105, 10, { align: 'center' });
                 doc.setFontSize(10);
                 doc.text(periode, 105, 16, { align: 'center' });
 
-                doc.setFillColor(230, 240, 255);
-                doc.rect(140, 25, 55, 20, 'F');
-                doc.setTextColor(0, 0, 128);
+                // Infos entreprise et salarié côte à côte
+                doc.setFontSize(10);
                 doc.setFont(undefined, 'bold');
-                doc.text("Monsieur JEROME DUBOIS", 145, 30);
+                doc.text("Entreprise :", 15, 25);
+                doc.text("Salarié :", 115, 25);
                 doc.setFont(undefined, 'normal');
-                doc.setTextColor(0);
-                doc.text("4 rue de la paix", 145, 35);
-                doc.text("70015 Paris", 145, 40);
+
+                const infosEntreprise = [
+                    "SOCIETE RUE ANONYME",
+                    "4 RUE DE LA PAIX",
+                    "70015 PARIS",
+                    "Siret : 1234567890002",
+                    "Téléphone : 01 23 45 67 89"
+                ];
+
+                const infosSalarie = [
+                    "Monsieur JEROME DUBOIS",
+                    "4 rue de la paix",
+                    "70015 Paris",
+                    "Email : jerome.dubois@email.com",
+                    "Téléphone : 06 12 34 56 78",
+                    "N° SS : 2 2800000000000"
+                ];
+
+                infosEntreprise.forEach((line, index) => {
+                    doc.text(line, 15, 30 + index * 5);
+                });
+
+                infosSalarie.forEach((line, index) => {
+                    doc.text(line, 115, 30 + index * 5);
+                });
 
                 doc.autoTable({
-                    startY: 50,
+                    startY: 65,
                     head: [["Éléments de paie", "Base", "Taux", "A déduire", "A payer", "Charges patronales"]],
                     body: [
                         ["Salaire de base", "151.67", "17.3939", "", "2 638.13", ""],
