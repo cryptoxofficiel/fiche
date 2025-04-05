@@ -8,52 +8,33 @@ body {
 }
 
 header {
-    background-color: #3598db;
-    color: white;
     text-align: center;
     padding: 20px;
-}
-
-main {
-    max-width: 800px;
-    margin: 20px auto;
-    padding: 20px;
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-form {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
-label {
-    font-weight: bold;
-}
-
-input, select, button {
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 16px;
-}
-
-button {
     background-color: #3598db;
     color: white;
-    cursor: pointer;
 }
 
-button:hover {
-    background-color: #2a7bbd;
-}
-
-#pay-slip-output {
-    margin-top: 20px;
+.enterprise, .salaries {
+    margin: 20px;
     padding: 15px;
-    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+}
+
+.tableau-paie table, .recapitulatif table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.tableau-paie th, .recapitulatif th {
+    background-color: #3598db;
+    color: white;
+    padding: 10px;
+    text-align: left;
+}
+
+.tableau-paie td, .recapitulatif td {
+    padding: 8px;
     border: 1px solid #ddd;
-    border-radius: 4px;
 }
