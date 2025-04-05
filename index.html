@@ -3,145 +3,128 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Générateur de Fiche de Paie</title>
+    <title>Fiche de Paie Professionnelle</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
     <style>
-        body { font-family: Arial; margin: 20px; }
-        button { 
-            padding: 10px 15px; 
-            background: #0066cc; 
-            color: white; 
-            border: none; 
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        button {
+            padding: 10px 15px;
+            background: #007bff;
+            color: white;
+            border: none;
             cursor: pointer;
             font-size: 16px;
-            margin-top: 20px;
         }
     </style>
 </head>
 <body>
-    <button onclick="genererPDF()">Générer la fiche de paie</button>
+    <button onclick="genererPDF()">Générer fiche de paie</button>
 
     <script>
         const { jsPDF } = window.jspdf;
 
         function genererPDF() {
             const doc = new jsPDF();
-            const periode = "du 01/01/2025 au 31/01/2025";
 
-            doc.setProperties({
-                title: 'Bulletin de paie ' + periode,
-                subject: 'Bulletin de salaire',
-                author: 'Entreprise',
-                keywords: 'paie, salaire, bulletin'
-            });
-
-            doc.setFontSize(16);
-            doc.text("BULLETIN DE PAIE", 105, 15, { align: 'center' });
+            const bleu = [41, 57, 150];
+            const grisClair = [240, 240, 240];
+            const periode = "10/2023";
 
             doc.setFontSize(10);
-            doc.text("Siret : 1234567890002", 20, 25);
-            doc.text("Entreprise : SOCIETE RUE ANONYME", 20, 30);
-            doc.text("Adresse : 4 RUE DE LA PAIX", 20, 35);
-            doc.text("70015 PARIS", 20, 40);
-            doc.text("Tél : 01 23 45 67 89", 20, 45);
-            doc.text("Email : contact@entreprise.com", 20, 50);
+            doc.setFont("helvetica", "normal");
 
-            doc.text("Nom : DUBOIS Jérôme", 120, 25);
-            doc.text("Adresse : 4 rue de la paix", 120, 30);
-            doc.text("70015 PARIS", 120, 35);
-            doc.text("N° Sécurité sociale : 1 23 45 67 891 234", 120, 40);
-            doc.text("Tél : 06 12 34 56 78", 120, 45);
-            doc.text("Email : j.dubois@email.com", 120, 50);
+            // EN-TÊTE ENTREPRISE + SALARIÉ
+            doc.text("SOCIETE RUE ANONYME", 15, 20);
+            doc.text("4 RUE DE LA PAIX", 15, 25);
+            doc.text("70015 PARIS", 15, 30);
 
-            doc.line(20, 55, 190, 55);
+            doc.text("Siret : 1234567890002", 15, 35);
+            doc.text("Code Naf : 0000Z", 15, 40);
+            doc.text("Urssaf/Msa : 11700000124563879", 15, 45);
+            doc.text("Matricule : 00001", 15, 50);
+            doc.text("N° SS : 2 2800000000000", 15, 55);
+            doc.text("IBAN / RIB : FR76 XXXX XXXX XXX", 15, 60);
 
+            doc.text("Emploi : non cadre", 15, 67);
+            doc.text("Statut professionnel : Employé", 15, 72);
+            doc.text("Niveau : xx", 15, 77);
+            doc.text("Coefficient : xxx", 15, 82);
+            doc.text("Entrée : 01/01/2018", 15, 87);
+            doc.text("Convention collective : xxxxxxxxxxxx", 15, 92);
+
+            // Salarié encadré
+            doc.setFillColor(224, 235, 255);
+            doc.rect(130, 20, 65, 30, "F");
+            doc.setTextColor(0, 0, 0);
+            doc.text("Monsieur JEROME DUBOIS", 133, 27);
+            doc.text("4 rue de la paix", 133, 32);
+            doc.text("70015 Paris", 133, 37);
+
+            // Titre
             doc.setFontSize(12);
-            doc.text(periode, 105, 65, { align: 'center' });
+            doc.setFont("helvetica", "bold");
+            doc.text("BULLETIN DE SALAIRE", 105, 10, { align: "center" });
+            doc.setFont("helvetica", "normal");
+            doc.text(`Période : ${periode}`, 105, 15, { align: "center" });
 
+            // TABLEAU PRINCIPAL
             doc.autoTable({
-                startY: 75,
-                head: [['Éléments', 'Base', 'Taux', 'A déduire', 'A payer', 'Charges patronales']],
+                startY: 100,
+                head: [["Éléments de paie", "Base", "Taux", "A déduire", "A payer", "Charges patronales"]],
                 body: [
-                    ['Salaire de base', '151.67', '17.3939', '', '2 638.13', ''],
-                    ['Prime d\'ancienneté', '', '', '', '140.85', ''],
-                    ['Salaire brut', '', '', '', '2 778.98', ''],
-                    ['Santé', '', '', '', '', ''],
-                    ['Sécurité Sociale - Mal. Mat. Inval. Déclés', '2 778.98', '0.4140', '11.50', '2 778.98', '7.0000 | 194.53'],
-                    ['Complémentaire - Incap. Inval. Déclés', '3 428.00', '3.1550', '108.15', '2 778.98', '0.4860 | 13.51'],
-                    ['Complémentaire - Santé', '', '', '', '3 428.00', '3.1550 | 108.15'],
-                    ['Accidents du travail & mal. professionnelles', '', '', '', '2 778.98', '0.9000 | 25.01'],
-                    ['Retraits', '', '', '', '', ''],
-                    ['Sécurité Sociale plafonnée', '2 778.98', '6.9000', '191.75', '2 778.98', '8.5500 | 237.60'],
-                    ['Sécurité Sociale déplafonnée', '2 778.98', '0.4000', '11.12', '2 778.98', '1.9000 | 52.80'],
-                    ['Complémentaire Tranche 1', '2 778.98', '4.0100', '111.44', '2 778.98', '6.0100 | 167.02'],
-                    ['Famille', '', '', '', '2 778.98', '3.4500 | 95.87'],
-                    ['Assurance chômage', '', '', '', '2 778.98', '4.2000 | 116.72'],
-                    ['Autres contributions dues par l\'employeur', '', '', '', '2 778.98', '4.4060 | 122.45'],
-                    ['CSG déduct. de l\'impôt sur le revenu', '2 852.01', '6.8000', '193.94', '', ''],
-                    ['CSG/CRDS non déduct. de l\'impôt sur le revenu', '2 852.01', '2.9000', '82.71', '', ''],
-                    ['Total des cotisations et contributions', '', '', '', '710.61', '1 143.39'],
-                    ['Titres-restaurant', '22.00', '3.6000', '79.20', '', '22.00 | 5.4000 | 118.80'],
-                    ['Forfait Télétravail', '', '', '', '7.00', ''],
-                    ['Forfait mensuel NAVIGO Zones 4 - 5', '65.20', '50.0000', '', '32.60', ''],
-                    ['Réintégration fiscale', '108.15', '', '', '', ''],
-                    ['Net à payer avant impôt sur le revenu', '', '', '', '2 028.77', ''],
-                    ['Impôt sur le revenu prélevé à la source - PAS', '2 259.23', '0.0000', '0.00', '', '']
+                    ["Salaire de base", "151.67", "17.3939", "", "2 638.13", ""],
+                    ["Prime d'ancienneté", "", "", "", "140.85", ""],
+                    ["Salaire brut", "", "", "", "4 778.98", ""],
+                    ["Sécurité Sociale - Mal. Mat. Inval. Décès", "2 778.98", "0.4140", "11.50", "", "7.0000 | 194.53"],
+                    ["Complémentaire - Incap. Inval. Décès", "2 778.98", "0.4860", "108.15", "", "13.51"],
+                    ["Complémentaire - Santé", "3 428.00", "3.1550", "", "", "108.15"],
+                    ["Accidents du travail & mal. professionnelles", "", "", "", "", "0.9000 | 25.01"],
+                    ["Sécurité Sociale plafonnée", "2 778.98", "6.9000", "191.75", "", "8.5500 | 237.60"],
+                    ["Sécurité Sociale déplafonnée", "2 778.98", "0.4000", "11.12", "", "1.9000 | 52.80"],
+                    ["Complémentaire Tranche 1", "2 778.98", "4.0100", "111.44", "", "6.0100 | 167.02"],
+                    ["Famille", "", "", "", "", "3.4500 | 95.87"],
+                    ["Assurance chômage", "", "", "", "", "4.2000 | 116.72"],
+                    ["Autres contributions dues par l'employeur", "2 778.98", "4.4060", "", "", "122.45"],
+                    ["CSG déduct. de l'impôt sur le revenu", "2 852.01", "6.8000", "193.94", "", ""],
+                    ["CSG/CRDS non déduct. de l'impôt", "2 852.01", "2.9000", "82.71", "", ""],
+                    ["Total cotisations", "", "", "710.61", "", "1 143.39"],
+                    ["Titres-restaurant", "22.00", "3.6000", "79.20", "", "118.80"],
+                    ["Forfait Télétravail", "", "", "", "7.00", ""],
+                    ["Forfait mensuel NAVIGO Zones 4 - 5", "65.20", "50.0000", "", "32.60", ""],
+                    ["Réintégration fiscale", "108.15", "", "", "", ""]
                 ],
-                margin: { left: 15 },
-                styles: { 
-                    fontSize: 7, 
-                    cellPadding: 2,
-                    overflow: 'linebreak'
-                },
-                headStyles: { 
-                    fillColor: [220, 220, 220],
-                    textColor: [0, 0, 0],
-                    fontStyle: 'bold'
-                },
+                styles: { fontSize: 7, cellPadding: 1 },
+                headStyles: { fillColor: bleu, textColor: 255 },
                 columnStyles: {
                     0: { cellWidth: 55 },
                     1: { cellWidth: 20 },
                     2: { cellWidth: 20 },
                     3: { cellWidth: 20 },
                     4: { cellWidth: 20 },
-                    5: { cellWidth: 30 }
-                }
+                    5: { cellWidth: 40 }
+                },
+                margin: { left: 15 }
             });
 
-            // Sauvegarde
-            doc.save('bulletin_paie_janvier_2025.pdf');
+            // RÉCAPITULATIF NET À PAYER
+            doc.autoTable({
+                startY: doc.lastAutoTable.finalY + 10,
+                body: [
+                    ["Net à payer avant impôt sur le revenu", { content: "2 028.77", styles: { fontStyle: "bold" } }],
+                    ["Impôt sur le revenu prélevé à la source - PAS", "0.00"],
+                    ["Net payé", { content: "2 028.77", styles: { fontStyle: "bold" } }]
+                ],
+                styles: { fontSize: 9 },
+                columnStyles: {
+                    0: { cellWidth: 130 },
+                    1: { halign: "right" }
+                },
+                margin: { left: 15 },
+                theme: 'plain'
+            });
 
-
-// Récapitulatif professionnel
-doc.autoTable({
-    startY: doc.lastAutoTable.finalY + 10,
-    head: [['Élément', 'Montant (€)']],
-    body: [
-        ['Salaire brut', '2 778.98'],
-        ['Total cotisations salariales', '710.61'],
-        ['Total cotisations patronales', '1 143.39'],
-        ['Net imposable', '2 259.23'],
-        ['Impôt sur le revenu (prélèvement à la source)', '0.00'],
-        [{ content: 'Net à payer', styles: { fontStyle: 'bold' } }, { content: '2 028.77', styles: { fontStyle: 'bold' } }]
-    ],
-    styles: {
-        fontSize: 9,
-        cellPadding: 4
-    },
-    headStyles: {
-        fillColor: [240, 240, 240],
-        textColor: [0, 0, 0],
-        fontStyle: 'bold'
-    },
-    columnStyles: {
-        0: { cellWidth: 100 },
-        1: { cellWidth: 40, halign: 'right' }
-    },
-    margin: { left: 60 }
-});
-
-            
+            doc.save("fiche_de_paie_clone.pdf");
         }
     </script>
 </body>
