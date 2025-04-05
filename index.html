@@ -111,6 +111,37 @@
 
             // Sauvegarde
             doc.save('bulletin_paie_janvier_2025.pdf');
+
+
+// Récapitulatif professionnel
+doc.autoTable({
+    startY: doc.lastAutoTable.finalY + 10,
+    head: [['Élément', 'Montant (€)']],
+    body: [
+        ['Salaire brut', '2 778.98'],
+        ['Total cotisations salariales', '710.61'],
+        ['Total cotisations patronales', '1 143.39'],
+        ['Net imposable', '2 259.23'],
+        ['Impôt sur le revenu (prélèvement à la source)', '0.00'],
+        [{ content: 'Net à payer', styles: { fontStyle: 'bold' } }, { content: '2 028.77', styles: { fontStyle: 'bold' } }]
+    ],
+    styles: {
+        fontSize: 9,
+        cellPadding: 4
+    },
+    headStyles: {
+        fillColor: [240, 240, 240],
+        textColor: [0, 0, 0],
+        fontStyle: 'bold'
+    },
+    columnStyles: {
+        0: { cellWidth: 100 },
+        1: { cellWidth: 40, halign: 'right' }
+    },
+    margin: { left: 60 }
+});
+
+            
         }
     </script>
 </body>
