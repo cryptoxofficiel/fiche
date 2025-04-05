@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fihe-Pay - Générateur de Fiche de Paie</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Fihe-Pay</h1>
+        <p>Générez gratuitement votre fiche de paie conforme aux lois françaises.</p>
+    </header>
+
+    <main>
+        <!-- Formulaire pour générer la fiche de paie -->
+        <section id="form-section">
+            <h2>Générer une Fiche de Paie</h2>
+            <form id="pay-slip-form">
+                <label for="employeeName">Nom du salarié :</label>
+                <input type="text" id="employeeName" name="employeeName" required>
+
+                <label for="grossSalary">Salaire brut mensuel (€) :</label>
+                <input type="number" id="grossSalary" name="grossSalary" required>
+
+                <label for="contractType">Type de contrat :</label>
+                <select id="contractType" name="contractType" required>
+                    <option value="cdi">CDI</option>
+                    <option value="cdd">CDD</option>
+                    <option value="part-time">Temps partiel</option>
+                </select>
+
+                <button type="submit">Générer</button>
+            </form>
+        </section>
+
+        <!-- Section pour afficher la fiche de paie -->
+        <section id="result-section">
+            <h2>Votre Fiche de Paie</h2>
+            <div id="pay-slip-output"></div>
+            <button id="download-pdf" style="display: none;">Télécharger en PDF</button>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2023 Fihe-Pay. Tous droits réservés.</p>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
