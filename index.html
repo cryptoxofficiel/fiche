@@ -7,54 +7,19 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
     <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        .input-group { margin-bottom: 15px; }
-        label { display: inline-block; width: 200px; }
-        input { padding: 5px; width: 200px; }
+        body { font-family: Arial; margin: 20px; }
         button { 
-            padding: 10px 20px; 
+            padding: 10px 15px; 
             background: #0066cc; 
             color: white; 
             border: none; 
-            cursor: pointer; 
-            margin-top: 20px;
+            cursor: pointer;
             font-size: 16px;
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
-    <h1>Générateur de Fiche de Paie</h1>
-    
-    <div class="input-group">
-        <label for="entreprise">Nom de l'entreprise :</label>
-        <input type="text" id="entreprise" value="SOCIETE RUE ANONYME">
-    </div>
-    
-    <div class="input-group">
-        <label for="adresse">Adresse :</label>
-        <input type="text" id="adresse" value="4 RUE DE LA PAIX 70015 PARIS">
-    </div>
-    
-    <div class="input-group">
-        <label for="siret">SIRET :</label>
-        <input type="text" id="siret" value="1234567890002">
-    </div>
-    
-    <div class="input-group">
-        <label for="salarie">Nom du salarié :</label>
-        <input type="text" id="salarie" value="Monsieur JEROME DUBOIS">
-    </div>
-    
-    <div class="input-group">
-        <label for="salaire-brut">Salaire brut :</label>
-        <input type="number" id="salaire-brut" value="2778.98">
-    </div>
-    
-    <div class="input-group">
-        <label for="heures">Heures travaillées :</label>
-        <input type="number" id="heures" value="151.67">
-    </div>
-    
     <button onclick="genererPDF()">Générer la fiche de paie</button>
 
     <script>
@@ -63,43 +28,26 @@
         function genererPDF() {
             const doc = new jsPDF();
             
-            // Récupération des valeurs
-            const entreprise = document.getElementById('entreprise').value;
-            const adresse = document.getElementById('adresse').value;
-            const siret = document.getElementById('siret').value;
-            const salarie = document.getElementById('salarie').value;
-            const salaireBrut = parseFloat(document.getElementById('salaire-brut').value);
-            const heures = document.getElementById('heures').value;
-            
-            // Calculs automatiques (simplifiés)
-            const primeAnciennete = 140.85;
-            const totalBrut = salaireBrut + primeAnciennete;
-            
-            // Cotisations salariales (taux 2023)
-            const cotisations = {
-                secuMaladie: Math.min(salaireBrut, 3428) * 0.13,
-                retraitePlafonnee: Math.min(salaireBrut, 3428) * 0.069,
-                retraiteDeplafonnee: salaireBrut * 0.004,
-                famille: salaireBrut * 0.0345,
-                csgCrds: salaireBrut * 0.097,
-                chomage: Math.min(salaireBrut, 3428) * 0.042
-            };
-            
-            const totalCotisations = Object.values(cotisations).reduce((a, b) => a + b, 0);
-            const netAPayer = totalBrut - totalCotisations;
+            // Configuration
+            doc.setProperties({
+                title: 'Fiche de paie',
+                subject: 'Bulletin de salaire',
+                author: 'SOCIETE RUE ANONYME',
+                keywords: 'paie, salaire, bulletin',
+                creator: 'FichePay Generator'
+            });
             
             // En-tête
             doc.setFontSize(16);
-            doc.text(entreprise, 105, 15, { align: 'center' });
+            doc.setTextColor(0, 0, 0);
+            doc.text("SOCIETE RUE ANONYME", 105, 15, { align: 'center' });
             
             doc.setFontSize(10);
-            const adresseLines = adresse.split('\n');
-            adresseLines.forEach((line, i) => {
-                doc.text(line, 105, 20 + (i * 5), { align: 'center' });
-            });
+            doc.text("4 RUE DE LA PAIX", 105, 20, { align: 'center' });
+            doc.text("70015 PARIS", 105, 25, { align: 'center' });
             
             // Informations entreprise
-            doc.text(`Siret : ${siret}`, 20, 35);
+            doc.text("Siret : 1234567890002", 20, 35);
             doc.text("Code Naf : 00002", 20, 40);
             doc.text("Ursa/MSa : 12700000124563979", 20, 45);
             doc.text("Matricule : 00001", 20, 50);
@@ -119,7 +67,7 @@
             
             // Informations salarié
             doc.setFontSize(12);
-            doc.text(salarie, 20, 80);
+            doc.text("Monsieur JEROME DUBOIS", 20, 80);
             doc.setFontSize(10);
             doc.text("4 rue de la paix", 20, 85);
             doc.text("70015 Paris", 20, 90);
@@ -132,22 +80,46 @@
                 startY: 105,
                 head: [['Éléments de paie', 'Base', 'Taux', 'A déduire', 'A payer', 'Charges patronales']],
                 body: [
-                    ['Salaire de base', heures, '17.3939', '', salaireBrut.toFixed(2), ''],
-                    ['Prime d\'ancienneté', '', '', '', primeAnciennete.toFixed(2), ''],
-                    ['Salaire brut', '', '', '', totalBrut.toFixed(2), ''],
+                    ['Salaire de base', '151.67', '17.3939', '', '2 638.13', ''],
+                    ['Prime d\'ancienneté', '', '', '', '140.85', ''],
+                    ['Salaire brut', '', '', '', '4 778.98', ''],
                     ['Santé', '', '', '', '', ''],
-                    ['Sécurité Sociale - Mal. Mat. Inval. Déclés', Math.min(salaireBrut, 3428).toFixed(2), '13%', cotisations.secuMaladie.toFixed(2), '', '7% | ' + (Math.min(salaireBrut, 3428) * 0.07).toFixed(2)],
-                    ['Retraite plafonnée', Math.min(salaireBrut, 3428).toFixed(2), '6.9%', cotisations.retraitePlafonnee.toFixed(2), '', '8.55% | ' + (Math.min(salaireBrut, 3428) * 0.0855).toFixed(2)],
-                    ['Retraite déplafonnée', salaireBrut.toFixed(2), '0.4%', cotisations.retraiteDeplafonnee.toFixed(2), '', '1.9% | ' + (salaireBrut * 0.019).toFixed(2)],
-                    ['Famille', salaireBrut.toFixed(2), '3.45%', cotisations.famille.toFixed(2), '', '3.45% | ' + (salaireBrut * 0.0345).toFixed(2)],
-                    ['CSG/CRDS', salaireBrut.toFixed(2), '9.7%', cotisations.csgCrds.toFixed(2), '', ''],
-                    ['Assurance chômage', Math.min(salaireBrut, 3428).toFixed(2), '4.2%', cotisations.chomage.toFixed(2), '', '4.2% | ' + (Math.min(salaireBrut, 3428) * 0.042).toFixed(2)],
-                    ['Total des cotisations', '', '', totalCotisations.toFixed(2), '', ''],
-                    ['Net à payer avant impôt', '', '', '', netAPayer.toFixed(2), '']
+                    ['Sécurité Sociale - Mal. Mat. Inval. Déclés', '2 778.98', '0.4140', '11.50', '2 778.98', '7.0000 | 194.53'],
+                    ['Complémentaire - Incap. Inval. Déclés', '3 428.00', '3.1550', '108.15', '2 778.98', '0.4860 | 13.51'],
+                    ['Complémentaire - Santé', '', '', '', '3 428.00', '3.1550 | 108.15'],
+                    ['Accidents du travail & mal. professionnelles', '', '', '', '2 778.98', '0.9000 | 25.01'],
+                    ['Retraits', '', '', '', '', ''],
+                    ['Sécurité Sociale plafonnée', '2 778.98', '6.9000', '191.75', '2 778.98', '8.5500 | 237.60'],
+                    ['Sécurité Sociale déplafonnée', '2 778.98', '0.4000', '11.12', '2 778.98', '1.9000 | 52.80'],
+                    ['Complémentaire Tranche 1', '2 778.98', '4.0100', '111.44', '2 778.98', '6.0100 | 167.02'],
+                    ['Famille', '', '', '', '2 778.98', '3.4500 | 95.87'],
+                    ['Assurance chômage', '', '', '', '2 778.98', '4.2000 | 116.72'],
+                    ['Autres contributions dues par l\'employeur', '', '', '', '', ''],
+                    ['Autres contributions dues par l\'employeur', '', '', '', '2 778.98', '4.4060 | 122.45'],
+                    ['Autres contributions dues par l\'employeur', '', '', '', '121.66', '8.0000 | 9.73'],
+                    ['CSG déduct. de l\'impôt sur le revenu', '2 852.01', '6.8000', '193.94', '', ''],
+                    ['CSG/CRDS non déduct. de l\'impôt sur le revenu', '2 852.01', '2.9000', '82.71', '', ''],
+                    ['Total des cotisations et contributions', '', '', '', '710.61', '1 143.39'],
+                    ['Titres-restaurant', '22.00', '3.6000', '79.20', '', '22.00 | 5.4000 | 118.80'],
+                    ['Forfait Télétravail', '', '', '', '7.00', ''],
+                    ['Forfait mensuel NAVIGO Zones 4 - 5', '65.20', '50.0000', '', '32.60', ''],
+                    ['Réintégration fiscale', '108.15', '', '', '', ''],
+                    ['Net à payer avant impôt sur le revenu', '', '', '', '2 028.77', ''],
+                    ['dont évolution de la rémunération liée à la suppression des cotisations chômage et maladie', '39.06', '', '', '', ''],
+                    ['Impôt sur le revenu prélevé à la source - PAS', '2 259.23', '0.0000', '0.00', '', ''],
+                    ['Taux personnalisé', '', '', '', '', '2 028.77']
                 ],
                 margin: { left: 20 },
-                styles: { fontSize: 7, cellPadding: 2 },
-                headStyles: { fillColor: [220, 220, 220] },
+                styles: { 
+                    fontSize: 7, 
+                    cellPadding: 2,
+                    overflow: 'linebreak'
+                },
+                headStyles: { 
+                    fillColor: [220, 220, 220],
+                    textColor: [0, 0, 0],
+                    fontStyle: 'bold'
+                },
                 columnStyles: {
                     0: { cellWidth: 60 },
                     1: { cellWidth: 20 },
@@ -155,6 +127,14 @@
                     3: { cellWidth: 20 },
                     4: { cellWidth: 20 },
                     5: { cellWidth: 30 }
+                },
+                didParseCell: function(data) {
+                    if (data.section === 'body' && data.row.index === 3) {
+                        data.cell.styles.fontStyle = 'bold';
+                    }
+                    if (data.section === 'body' && data.row.index === 2) {
+                        data.cell.styles.fontStyle = 'bold';
+                    }
                 }
             });
             
@@ -166,12 +146,20 @@
                 startY: doc.lastAutoTable.finalY + 15,
                 head: [['', 'Heures', 'Heures suppl.', 'Brut', 'Plafond S.S.', 'Net imposable', 'Ch. nationales', 'Coût Global', 'Total versé', 'Allègements']],
                 body: [
-                    ['Mensuel', heures, '', salaireBrut.toFixed(2), '3 428.00', (salaireBrut * 0.8).toFixed(2), (salaireBrut * 0.45).toFixed(2), (salaireBrut * 1.45).toFixed(2), (salaireBrut * 1.4).toFixed(2), '216.76'],
-                    ['Annuel', (heures * 12).toFixed(2), '', (salaireBrut * 12).toFixed(2), '27 424.00', (salaireBrut * 12 * 0.8).toFixed(2), (salaireBrut * 12 * 0.45).toFixed(2), (salaireBrut * 12 * 1.45).toFixed(2), (salaireBrut * 12 * 1.4).toFixed(2), '1 863.77']
+                    ['Mensuel', '151.67', '', '2 778.98', '3 428.00', '2 259.23', '1 262.19', '4 080.77', '3 922.37', '216.76'],
+                    ['Annuel', '1 213.36', '', '23 894.56', '27 424.00', '19 430.05', '10 603.69', '34 827.05', '33 655.85', '1 863.77']
                 ],
                 margin: { left: 20 },
-                styles: { fontSize: 7, cellPadding: 2 },
-                headStyles: { fillColor: [220, 220, 220] }
+                styles: { 
+                    fontSize: 7, 
+                    cellPadding: 2,
+                    overflow: 'linebreak'
+                },
+                headStyles: { 
+                    fillColor: [220, 220, 220],
+                    textColor: [0, 0, 0],
+                    fontStyle: 'bold'
+                }
             });
             
             // Pied de page
@@ -186,7 +174,7 @@
             doc.text("_________________________", 140, 275);
             
             // Sauvegarde
-            doc.save(`fiche_paie_${salarie.replace(' ', '_')}.pdf`);
+            doc.save('fiche_paie_JEROME_DUBOIS.pdf');
         }
     </script>
 </body>
